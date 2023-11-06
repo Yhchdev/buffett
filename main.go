@@ -30,13 +30,13 @@ func main() {
 	//
 
 	tableX := []interface{}{nil}
-	KCFJCXSYJLR := []interface{}{"扣非净利润"}
-	KCFJCXSYJLRTZ := []interface{}{"扣非净利润同比增长（%）"}
+	KCFJCXSYJLR := []interface{}{"扣非净利润(亿元)"}
+	KCFJCXSYJLRTZ := []interface{}{"扣非净利润同比增长(%)"}
 
 	for _, item := range usefulHistory {
 		tableX = append(tableX, item.ReportYear)
 		KCFJCXSYJLR = append(KCFJCXSYJLR, utils.ConvertToBillions(item.Kcfjcxsyjlr))
-		KCFJCXSYJLRTZ = append(KCFJCXSYJLRTZ, item.Kcfjcxsyjlrtz)
+		KCFJCXSYJLRTZ = append(KCFJCXSYJLRTZ, utils.FloatFormat(item.Kcfjcxsyjlrtz))
 	}
 
 	for idx, row := range [][]interface{}{
@@ -91,7 +91,7 @@ func main() {
 		Type: excelize.Line,
 		Series: []excelize.ChartSeries{
 			{
-				Name:       "扣非净利润同比增长（%）",
+				Name:       "Sheet1!$A$3",
 				Categories: fmt.Sprintf("Sheet1!$%c$1:$B$1", columnLetter),
 				Values:     fmt.Sprintf("Sheet1!$%c$3:$B$3", columnLetter),
 				Marker: excelize.ChartMarker{
