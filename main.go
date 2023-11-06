@@ -87,6 +87,10 @@ func main() {
 			ShowVal:         true,
 		},
 		ShowBlanksAs: "zero",
+		Dimension: excelize.ChartDimension{
+			Width:  480 * 1.5,
+			Height: 260 * 1.5,
+		},
 	}, &excelize.Chart{
 		Type: excelize.Line,
 		Series: []excelize.ChartSeries{
