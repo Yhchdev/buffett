@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"fmt"
+	"github.com/Yhchdev/buffett/controller"
 	"github.com/Yhchdev/buffett/datacenter/eastmoney"
 	"github.com/Yhchdev/buffett/middleware"
 	"github.com/Yhchdev/buffett/utils"
@@ -90,7 +91,9 @@ func main() {
 	router.Use(middleware.Cors())
 
 	// 定义路由处理函数
-	router.GET("/data", getData)
+
+	router.GET("/search", controller.Search)
+	router.GET("/chart", controller.Chart)
 
 	router.Run(":9000")
 
