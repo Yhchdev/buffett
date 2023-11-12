@@ -25,4 +25,6 @@
 
 营收增长率 利润增长率 净利润增长率
 
+* 
+
 CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build main.go

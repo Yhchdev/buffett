@@ -9,8 +9,16 @@ import (
 	"strings"
 )
 
-type Cha struct {
+const maxHistory = 9
+
+type Char struct {
+	Name   string   `json:"name"`
+	Series []Series `json:"series"`
+}
+
+type Series struct {
 	Type string        `json:"type"`
+	Name string        `json:"name"`
 	X    []interface{} `json:"x"`
 	Y    []interface{} `json:"y"`
 }
@@ -18,9 +26,7 @@ type Cha struct {
 func Chart(c *gin.Context) {
 
 	upperStr := strings.ToUpper(c.Query("secucode"))
-
-	fmt.Println(upperStr)
-
+	reportType := c.Query("report")
 	// 获取数据
 	history, err := eastmoney.NewEastMoney().QueryHistoricalFinaMainData(c, upperStr)
 	if err != nil {
@@ -28,7 +34,7 @@ func Chart(c *gin.Context) {
 		return
 	}
 
-	usefulHistory := history.FilterByReportType(eastmoney.FinaReportTypeQ3)
+	usefulHistory := history.FilterByReportType(eastmoney.FinaReportType(reportType))
 
 	f := excelize.NewFile()
 	defer func() {
@@ -43,6 +49,10 @@ func Chart(c *gin.Context) {
 	Totaloperatereve := []interface{}{}
 	Totaloperaterevetz := []interface{}{}
 
+	if len(usefulHistory) > maxHistory {
+		usefulHistory = usefulHistory[len(usefulHistory)-9:]
+	}
+
 	for _, item := range usefulHistory {
 
 		tableX = append(tableX, item.ReportYear)
@@ -52,18 +62,39 @@ func Chart(c *gin.Context) {
 		Totaloperaterevetz = append(Totaloperaterevetz, utils.FloatFormat(item.Totaloperaterevetz))
 	}
 
-	charts := make([][]Cha, 0)
+	charts := make([]Char, 0)
 
-	charts = append(charts, []Cha{
-		{
-			Type: "bar",
-			X:    tableX,
-			Y:    KCFJCXSYJLR,
+	charts = append(charts, Char{
+		Name: "扣非净利润及其增长率",
+		Series: []Series{
+			{
+				Name: "扣非净利润",
+				Type: "bar",
+				X:    tableX,
+				Y:    KCFJCXSYJLR,
+			},
+			{
+				Name: "增长率",
+				Type: "line",
+				X:    tableX,
+				Y:    KCFJCXSYJLRTZ,
+			},
 		},
-		{
-			Type: "line",
-			X:    tableX,
-			Y:    KCFJCXSYJLRTZ,
+	}, Char{
+		Name: "营业收入及其增长率",
+		Series: []Series{
+			{
+				Name: "营业收入",
+				Type: "bar",
+				X:    tableX,
+				Y:    Totaloperatereve,
+			},
+			{
+				Name: "增长率",
+				Type: "line",
+				X:    tableX,
+				Y:    Totaloperaterevetz,
+			},
 		},
 	})
 
