@@ -5,7 +5,8 @@ import (
 	"github.com/Yhchdev/buffett/datacenter/eastmoney"
 	"github.com/Yhchdev/buffett/utils"
 	"github.com/gin-gonic/gin"
-	"github.com/xuri/excelize/v2"
+	"github.com/spf13/cast"
+	"sort"
 	"strings"
 )
 
@@ -36,30 +37,57 @@ func Chart(c *gin.Context) {
 
 	usefulHistory := history.FilterByReportType(eastmoney.FinaReportType(reportType))
 
-	f := excelize.NewFile()
-	defer func() {
-		if err := f.Close(); err != nil {
-			fmt.Println(err)
-		}
-	}()
+	if len(usefulHistory) > maxHistory {
+		usefulHistory = usefulHistory[len(usefulHistory)-9:]
+	}
+
+	incomeDate := utils.GincomeReportDateParams(reportType, len(usefulHistory), cast.ToInt(usefulHistory[len(usefulHistory)-1].ReportYear))
+	fmt.Println(incomeDate)
+
+	incomes, err := eastmoney.NewEastMoney().QueryFinaGincomeData(c, upperStr, incomeDate)
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+
+	sort.Slice(incomes, func(i, j int) bool {
+		return incomes[i].ReportDate < incomes[j].ReportDate
+	})
+
+	//fmt.Println(incomes)
 
 	tableX := []interface{}{}
 	KCFJCXSYJLR := []interface{}{}
 	KCFJCXSYJLRTZ := []interface{}{}
 	Totaloperatereve := []interface{}{}
 	Totaloperaterevetz := []interface{}{}
-
-	if len(usefulHistory) > maxHistory {
-		usefulHistory = usefulHistory[len(usefulHistory)-9:]
-	}
+	Parentnetprofittz := []interface{}{}
+	Xsmll := []interface{}{}
+	Xsjll := []interface{}{}
 
 	for _, item := range usefulHistory {
-
 		tableX = append(tableX, item.ReportYear)
 		KCFJCXSYJLR = append(KCFJCXSYJLR, utils.ConvertToBillions(item.Kcfjcxsyjlr))
 		KCFJCXSYJLRTZ = append(KCFJCXSYJLRTZ, utils.FloatFormat(item.Kcfjcxsyjlrtz))
 		Totaloperatereve = append(Totaloperatereve, utils.ConvertToBillions(item.Totaloperatereve))
 		Totaloperaterevetz = append(Totaloperaterevetz, utils.FloatFormat(item.Totaloperaterevetz))
+		Parentnetprofittz = append(Parentnetprofittz, utils.FloatFormat(item.Parentnetprofittz))
+		Xsmll = append(Xsmll, utils.FloatFormat(item.Xsmll))
+		Xsjll = append(Xsjll, utils.FloatFormat(item.Xsjll))
+	}
+
+	// 核心利润
+	coreProfit := []interface{}{}
+	coreProfitCompareOperateIncome := []interface{}{}
+
+	for _, item := range incomes {
+		coreP := utils.ConvertToBillions(item.OperateIncome - item.OperateTaxAdd - item.OperateCost - item.ManageExpense -
+			item.SaleExpense - item.FinanceExpense)
+		coreProfit = append(coreProfit, coreP)
+
+		coreProfitCIncome := utils.FloatFormat(coreP/utils.ConvertToBillions(item.OperateIncome)) * 100
+
+		coreProfitCompareOperateIncome = append(coreProfitCompareOperateIncome, coreProfitCIncome)
 	}
 
 	charts := make([]Char, 0)
@@ -94,6 +122,60 @@ func Chart(c *gin.Context) {
 				Type: "line",
 				X:    tableX,
 				Y:    Totaloperaterevetz,
+			},
+		},
+	}, Char{
+		Name: "盈利增长能力",
+		Series: []Series{
+			{
+				Name: "营业收入增长率",
+				Type: "line",
+				X:    tableX,
+				Y:    Totaloperaterevetz,
+			},
+			{
+				Name: "净利润增长率",
+				Type: "line",
+				X:    tableX,
+				Y:    Parentnetprofittz,
+			},
+			{
+				Name: "扣非净利润增长率",
+				Type: "line",
+				X:    tableX,
+				Y:    KCFJCXSYJLRTZ,
+			},
+		},
+	}, Char{
+		Name: "盈利能力",
+		Series: []Series{
+			{
+				Name: "毛利率",
+				Type: "line",
+				X:    tableX,
+				Y:    Xsmll,
+			},
+			{
+				Name: "净利率",
+				Type: "line",
+				X:    tableX,
+				Y:    Xsjll,
+			},
+		},
+	}, Char{
+		Name: "核心净利润及其贡献率",
+		Series: []Series{
+			{
+				Name: "核心净利润",
+				Type: "bar",
+				X:    tableX,
+				Y:    coreProfit,
+			},
+			{
+				Name: "核心净利润率",
+				Type: "line",
+				X:    tableX,
+				Y:    coreProfitCompareOperateIncome,
 			},
 		},
 	})

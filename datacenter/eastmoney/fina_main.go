@@ -482,7 +482,7 @@ func (e EastMoney) QueryHistoricalFinaMainData(ctx context.Context, secuCode str
 
 	_ = json.Unmarshal(resp.Body(), finaMain)
 
-	fmt.Printf("%+v", finaMain)
+	//fmt.Printf("%+v", finaMain)
 
 	return finaMain.Result.Data, nil
 }
