@@ -338,27 +338,25 @@ type BalanceData struct {
 
 type BalanceDataList []BalanceData
 
-// RespFinaCashflowData 现金流量接口返回数据
 type RespBalanceData struct {
 	Version string `json:"version"`
 	Result  struct {
-		Pages int              `json:"pages"`
-		Data  CashflowDataList `json:"data"`
-		Count int              `json:"count"`
+		Pages int             `json:"pages"`
+		Data  BalanceDataList `json:"data"`
+		Count int             `json:"count"`
 	} `json:"result"`
 	Success bool   `json:"success"`
 	Message string `json:"message"`
 	Code    int    `json:"code"`
 }
 
-// QueryBlanceData 获取财务分析现金流量表数据，最新数据在最前面
 func (e EastMoney) QueryBlanceData(ctx context.Context, secuCode string, date string) (BalanceDataList, error) {
 	apiurl := "https://datacenter.eastmoney.com/securities/api/data/get"
 	params := map[string]string{
 		"source": "HSF10",
 		"client": "APP",
-		"type":   "RPT_F10_FINANCE_GCASHFLOW",
-		"sty":    "APP_F10_GCASHFLOW",
+		"type":   "RPT_F10_FINANCE_GBALANCE",
+		"sty":    "F10_FINANCE_GBALANCE",
 		"filter": fmt.Sprintf(`(SECUCODE="%s")(REPORT_DATE in (%s))`, strings.ToUpper(secuCode), date),
 		"ps":     "10",
 		"sr":     "-1",
@@ -367,7 +365,7 @@ func (e EastMoney) QueryBlanceData(ctx context.Context, secuCode string, date st
 	logrus.Debug(ctx, "EastMoney QueryBlanceData "+apiurl+" begin", zap.Any("params", params))
 	beginTime := time.Now()
 
-	balaceResp := RespBlanceData{}
+	balaceResp := RespBalanceData{}
 
 	resp, err := e.HTTPClient.R().SetQueryParams(params).Get(apiurl)
 
@@ -384,7 +382,7 @@ func (e EastMoney) QueryBlanceData(ctx context.Context, secuCode string, date st
 		return nil, fmt.Errorf("%s %#v", secuCode, resp)
 	}
 
-	_ = json.Unmarshal(resp.Body(), &cashflowResp)
+	_ = json.Unmarshal(resp.Body(), &balaceResp)
 
-	return cashflowResp.Result.Data, nil
+	return balaceResp.Result.Data, nil
 }

@@ -28,7 +28,13 @@ func Chart(c *gin.Context) {
 
 	upperStr := strings.ToUpper(c.Query("secucode"))
 	reportType := c.Query("report")
-	// 获取数据
+
+	if upperStr == "" && reportType == "" {
+		fmt.Println("非法参数")
+		return
+	}
+
+	// 获取经营分析数据
 	history, err := eastmoney.NewEastMoney().QueryHistoricalFinaMainData(c, upperStr)
 	if err != nil {
 		fmt.Println(err)
@@ -41,9 +47,11 @@ func Chart(c *gin.Context) {
 		usefulHistory = usefulHistory[len(usefulHistory)-9:]
 	}
 
+	// 查询的年份和月份列表
 	incomeDate := utils.GincomeReportDateParams(reportType, len(usefulHistory), cast.ToInt(usefulHistory[len(usefulHistory)-1].ReportYear))
 	fmt.Println(incomeDate)
 
+	// 获取利润表数据
 	incomes, err := eastmoney.NewEastMoney().QueryFinaGincomeData(c, upperStr, incomeDate)
 	if err != nil {
 		fmt.Println(err)
@@ -54,6 +62,18 @@ func Chart(c *gin.Context) {
 		return incomes[i].ReportDate < incomes[j].ReportDate
 	})
 
+	// 获取现金流量表数据
+
+	cashFlow, err := eastmoney.NewEastMoney().QueryFinaCashflowData(c, upperStr, incomeDate)
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+
+	sort.Slice(cashFlow, func(i, j int) bool {
+		return cashFlow[i].ReportDate < cashFlow[j].ReportDate
+	})
+
 	//fmt.Println(incomes)
 
 	tableX := []interface{}{}
@@ -61,6 +81,7 @@ func Chart(c *gin.Context) {
 	KCFJCXSYJLRTZ := []interface{}{}
 	Totaloperatereve := []interface{}{}
 	Totaloperaterevetz := []interface{}{}
+	Parentnetprofit := []interface{}{}
 	Parentnetprofittz := []interface{}{}
 	Xsmll := []interface{}{}
 	Xsjll := []interface{}{}
@@ -74,6 +95,7 @@ func Chart(c *gin.Context) {
 		Parentnetprofittz = append(Parentnetprofittz, utils.FloatFormat(item.Parentnetprofittz))
 		Xsmll = append(Xsmll, utils.FloatFormat(item.Xsmll))
 		Xsjll = append(Xsjll, utils.FloatFormat(item.Xsjll))
+		Parentnetprofit = append(Parentnetprofit, utils.ConvertToBillions(item.Parentnetprofit))
 	}
 
 	// 核心利润
@@ -88,6 +110,11 @@ func Chart(c *gin.Context) {
 		coreProfitCIncome := utils.FloatFormat(coreP/utils.ConvertToBillions(item.OperateIncome)) * 100
 
 		coreProfitCompareOperateIncome = append(coreProfitCompareOperateIncome, coreProfitCIncome)
+	}
+
+	netcashOperate := []interface{}{}
+	for _, item := range cashFlow {
+		netcashOperate = append(netcashOperate, utils.ConvertToBillions(item.NetcashOperate))
 	}
 
 	charts := make([]Char, 0)
@@ -176,6 +203,28 @@ func Chart(c *gin.Context) {
 				Type: "line",
 				X:    tableX,
 				Y:    coreProfitCompareOperateIncome,
+			},
+		},
+	}, Char{
+		Name: "净利润与营收现金净流量",
+		Series: []Series{
+			{
+				Name: "经营活动净流量",
+				Type: "line",
+				X:    tableX,
+				Y:    netcashOperate,
+			},
+			{
+				Name: "净利润",
+				Type: "line",
+				X:    tableX,
+				Y:    Parentnetprofit,
+			},
+			{
+				Name: "扣非净利润",
+				Type: "line",
+				X:    tableX,
+				Y:    KCFJCXSYJLR,
 			},
 		},
 	})
