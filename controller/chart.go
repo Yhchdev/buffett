@@ -113,8 +113,25 @@ func Chart(c *gin.Context) {
 	}
 
 	netcashOperate := []interface{}{}
+	salesServices := []interface{}{}
+
 	for _, item := range cashFlow {
 		netcashOperate = append(netcashOperate, utils.ConvertToBillions(item.NetcashOperate))
+		salesServices = append(salesServices, utils.ConvertToBillions(item.SalesServices))
+	}
+
+	// 净现比
+	netcashOperateCompareKCFJCXSYJLR := []interface{}{}
+	// 核现比
+	coreProfitCompareKCFJCXSYJLR := []interface{}{}
+	// 销售收现比
+	salesServicesCompareTotaloperatereve := []interface{}{}
+
+	//  比较
+	for i := 0; i < len(usefulHistory); i++ {
+		netcashOperateCompareKCFJCXSYJLR = append(netcashOperateCompareKCFJCXSYJLR, utils.FloatFormat(cast.ToFloat64(netcashOperate[i])/cast.ToFloat64(KCFJCXSYJLR[i])))
+		coreProfitCompareKCFJCXSYJLR = append(coreProfitCompareKCFJCXSYJLR, utils.FloatFormat(cast.ToFloat64(coreProfit[i])/cast.ToFloat64(KCFJCXSYJLR[i])))
+		salesServicesCompareTotaloperatereve = append(salesServicesCompareTotaloperatereve, utils.FloatFormat(cast.ToFloat64(salesServices[i])/cast.ToFloat64(Totaloperatereve[i])))
 	}
 
 	charts := make([]Char, 0)
@@ -225,6 +242,28 @@ func Chart(c *gin.Context) {
 				Type: "line",
 				X:    tableX,
 				Y:    KCFJCXSYJLR,
+			},
+		},
+	}, Char{
+		Name: "业绩真实性分析",
+		Series: []Series{
+			{
+				Name: "净现比",
+				Type: "line",
+				X:    tableX,
+				Y:    netcashOperateCompareKCFJCXSYJLR,
+			},
+			{
+				Name: "核现比",
+				Type: "line",
+				X:    tableX,
+				Y:    coreProfitCompareKCFJCXSYJLR,
+			},
+			{
+				Name: "收现比",
+				Type: "line",
+				X:    tableX,
+				Y:    salesServicesCompareTotaloperatereve,
 			},
 		},
 	})
