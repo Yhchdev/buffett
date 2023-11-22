@@ -13,15 +13,21 @@ import (
 const maxHistory = 9
 
 type Char struct {
-	Name   string   `json:"name"`
-	Series []Series `json:"series"`
+	Name   string        `json:"name"`
+	Series []Series      `json:"series"`
+	X      []interface{} `json:"x"` // 所有图的x是一致的
 }
 
 type Series struct {
-	Type string        `json:"type"`
-	Name string        `json:"name"`
-	X    []interface{} `json:"x"`
-	Y    []interface{} `json:"y"`
+	Type     string        `json:"type"`     // 图的类型  line bar
+	Name     string        `json:"name"`     // 图的名称
+	Stack    string        `json:"stack"`    // 柱状图堆叠
+	Emphasis Emphasis      `json:"emphasis"` // 高亮
+	Y        []interface{} `json:"y"`
+}
+
+type Emphasis struct {
+	Focus string `json:"focus" default:"series"`
 }
 
 func Chart(c *gin.Context) {
@@ -138,17 +144,16 @@ func Chart(c *gin.Context) {
 
 	charts = append(charts, Char{
 		Name: "扣非净利润及其增长率",
+		X:    tableX,
 		Series: []Series{
 			{
 				Name: "扣非净利润",
 				Type: "bar",
-				X:    tableX,
 				Y:    KCFJCXSYJLR,
 			},
 			{
 				Name: "增长率",
 				Type: "line",
-				X:    tableX,
 				Y:    KCFJCXSYJLRTZ,
 			},
 		},
@@ -158,13 +163,11 @@ func Chart(c *gin.Context) {
 			{
 				Name: "营业收入",
 				Type: "bar",
-				X:    tableX,
 				Y:    Totaloperatereve,
 			},
 			{
 				Name: "增长率",
 				Type: "line",
-				X:    tableX,
 				Y:    Totaloperaterevetz,
 			},
 		},
@@ -174,19 +177,16 @@ func Chart(c *gin.Context) {
 			{
 				Name: "营业收入增长率",
 				Type: "line",
-				X:    tableX,
 				Y:    Totaloperaterevetz,
 			},
 			{
 				Name: "净利润增长率",
 				Type: "line",
-				X:    tableX,
 				Y:    Parentnetprofittz,
 			},
 			{
 				Name: "扣非净利润增长率",
 				Type: "line",
-				X:    tableX,
 				Y:    KCFJCXSYJLRTZ,
 			},
 		},
@@ -196,13 +196,11 @@ func Chart(c *gin.Context) {
 			{
 				Name: "毛利率",
 				Type: "line",
-				X:    tableX,
 				Y:    Xsmll,
 			},
 			{
 				Name: "净利率",
 				Type: "line",
-				X:    tableX,
 				Y:    Xsjll,
 			},
 		},
@@ -212,13 +210,11 @@ func Chart(c *gin.Context) {
 			{
 				Name: "核心净利润",
 				Type: "bar",
-				X:    tableX,
 				Y:    coreProfit,
 			},
 			{
 				Name: "核心净利润率",
 				Type: "line",
-				X:    tableX,
 				Y:    coreProfitCompareOperateIncome,
 			},
 		},
@@ -228,19 +224,16 @@ func Chart(c *gin.Context) {
 			{
 				Name: "经营活动净流量",
 				Type: "line",
-				X:    tableX,
 				Y:    netcashOperate,
 			},
 			{
 				Name: "净利润",
 				Type: "line",
-				X:    tableX,
 				Y:    Parentnetprofit,
 			},
 			{
 				Name: "扣非净利润",
 				Type: "line",
-				X:    tableX,
 				Y:    KCFJCXSYJLR,
 			},
 		},
@@ -250,19 +243,16 @@ func Chart(c *gin.Context) {
 			{
 				Name: "净现比",
 				Type: "line",
-				X:    tableX,
 				Y:    netcashOperateCompareKCFJCXSYJLR,
 			},
 			{
 				Name: "核现比",
 				Type: "line",
-				X:    tableX,
 				Y:    coreProfitCompareKCFJCXSYJLR,
 			},
 			{
 				Name: "收现比",
 				Type: "line",
-				X:    tableX,
 				Y:    salesServicesCompareTotaloperatereve,
 			},
 		},
