@@ -7,7 +7,7 @@ import (
 
 const maxNum = 6
 
-type SearchResp struct {
+type Stock struct {
 	// 带后缀的代码
 	Secucode string `json:"value"`
 	// 股票名称
@@ -22,10 +22,10 @@ func Search(c *gin.Context) {
 		return
 	}
 
-	stocksResp := make([]SearchResp, 0)
+	stocksResp := make([]Stock, 0)
 
 	for i, stock := range stocks {
-		stocksResp = append(stocksResp, SearchResp{
+		stocksResp = append(stocksResp, Stock{
 			Secucode: stock.Secucode,
 			Name:     stock.Name,
 		})

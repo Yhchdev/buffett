@@ -94,6 +94,7 @@ func main() {
 
 	router.GET("/search", controller.Search)
 	router.GET("/chart", controller.Chart)
+	router.GET("/hot_stock", controller.HotStock)
 
 	// 微信公众号 关注 & 取消关注 callback
 	router.GET("/wx/follow", controller.Follow)
