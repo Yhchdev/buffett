@@ -12,10 +12,14 @@ import (
 
 const maxHistory = 9
 
-type Char struct {
-	Name   string        `json:"name"`
-	Series []Series      `json:"series"`
+type CharsResp struct {
+	Charts []Char        `json:"charts"`
 	X      []interface{} `json:"x"` // 所有图的x是一致的
+}
+
+type Char struct {
+	Name   string   `json:"name"`
+	Series []Series `json:"series"`
 }
 
 type Series struct {
@@ -35,7 +39,7 @@ func Chart(c *gin.Context) {
 	upperStr := strings.ToUpper(c.Query("secucode"))
 	reportType := c.Query("report")
 
-	if upperStr == "" && reportType == "" {
+	if upperStr == "" || reportType == "" {
 		fmt.Println("非法参数")
 		return
 	}
@@ -80,7 +84,17 @@ func Chart(c *gin.Context) {
 		return cashFlow[i].ReportDate < cashFlow[j].ReportDate
 	})
 
-	//fmt.Println(incomes)
+	// 获取资产负债表数据
+
+	balance, err := eastmoney.NewEastMoney().QueryBlanceData(c, upperStr, incomeDate)
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+
+	sort.Slice(balance, func(i, j int) bool {
+		return balance[i].REPORTDATE < balance[j].REPORTDATE
+	})
 
 	tableX := []interface{}{}
 	KCFJCXSYJLR := []interface{}{}
@@ -140,11 +154,43 @@ func Chart(c *gin.Context) {
 		salesServicesCompareTotaloperatereve = append(salesServicesCompareTotaloperatereve, utils.FloatFormat(cast.ToFloat64(salesServices[i])/cast.ToFloat64(Totaloperatereve[i])))
 	}
 
+	LONGEQUITYINVEST := []interface{}{}
+	MONETARYFUNDS := []interface{}{}
+	INVENTORY := []interface{}{}
+	CIP := []interface{}{}
+	FIXEDASSET := []interface{}{}
+	NOTEACCOUNTSRECE := []interface{}{}
+	//PREPAYMENT := []interface{}{}
+	// 经营性资产
+	jingyingxingzichans := []interface{}{}
+
+	jingyingxingzichanProportion := []interface{}{}
+	fixedassetProportion := []interface{}{}
+	prepayments := []interface{}{}
+	prepaymentsProportion := []interface{}{}
+
+	for i, item := range balance {
+		LONGEQUITYINVEST = append(LONGEQUITYINVEST, utils.ConvertToBillions(cast.ToFloat64(item.LONGEQUITYINVEST)))
+		MONETARYFUNDS = append(MONETARYFUNDS, utils.ConvertToBillions(item.MONETARYFUNDS))
+		INVENTORY = append(INVENTORY, utils.ConvertToBillions(item.INVENTORY))
+		CIP = append(CIP, utils.ConvertToBillions(item.CIP))
+		FIXEDASSET = append(FIXEDASSET, utils.ConvertToBillions(item.FIXEDASSET))
+		NOTEACCOUNTSRECE = append(NOTEACCOUNTSRECE, utils.ConvertToBillions(item.NOTEACCOUNTSRECE))
+		jingyingxingzichan := item.INVENTORY + item.NOTEACCOUNTSRECE + item.PREPAYMENT + item.MONETARYFUNDS
+		jingyingxingzichans = append(jingyingxingzichans, utils.ConvertToBillions(jingyingxingzichan))
+
+		jingyingxingzichanProportion = append(jingyingxingzichanProportion, utils.FloatFormat(jingyingxingzichan/item.TOTALASSETS))
+		fixedassetProportion = append(fixedassetProportion, utils.FloatFormat(item.FIXEDASSET/item.TOTALASSETS))
+		prepayments = append(prepayments, utils.ConvertToBillions(item.PREPAYMENT))
+		prepaymentsProportion = append(prepaymentsProportion, utils.FloatFormat(utils.ConvertToBillions(item.PREPAYMENT)/cast.ToFloat64(Totaloperatereve[i])))
+	}
+
+	fmt.Println("MONETARYFUNDS", MONETARYFUNDS)
+
 	charts := make([]Char, 0)
 
 	charts = append(charts, Char{
 		Name: "扣非净利润及其增长率",
-		X:    tableX,
 		Series: []Series{
 			{
 				Name: "扣非净利润",
@@ -256,11 +302,97 @@ func Chart(c *gin.Context) {
 				Y:    salesServicesCompareTotaloperatereve,
 			},
 		},
+	}, Char{
+		Name: "主要资产结构",
+		Series: []Series{
+			{
+				Name:     "长期股权投资",
+				Type:     "bar",
+				Emphasis: Emphasis{Focus: "series"},
+				Stack:    "total",
+				Y:        LONGEQUITYINVEST,
+			},
+			{
+				Name:     "货币资金",
+				Type:     "bar",
+				Emphasis: Emphasis{Focus: "series"},
+				Stack:    "total",
+				Y:        MONETARYFUNDS,
+			},
+			{
+				Name:     "存货",
+				Type:     "bar",
+				Emphasis: Emphasis{Focus: "series"},
+				Stack:    "total",
+				Y:        INVENTORY,
+			},
+			{
+				Name:     "在建工程",
+				Type:     "bar",
+				Emphasis: Emphasis{Focus: "series"},
+				Stack:    "total",
+				Y:        CIP,
+			},
+			{
+				Name:     "固定资产",
+				Type:     "bar",
+				Emphasis: Emphasis{Focus: "series"},
+				Stack:    "total",
+				Y:        FIXEDASSET,
+			},
+			{
+				Name:     "应收账款",
+				Type:     "bar",
+				Emphasis: Emphasis{Focus: "series"},
+				Stack:    "total",
+				Y:        NOTEACCOUNTSRECE,
+			},
+		},
+	}, Char{
+		Name: "经营性资产及其占比",
+		Series: []Series{
+			{
+				Name: "经营性资产",
+				Type: "bar",
+				Y:    jingyingxingzichans,
+			},
+			{
+				Name: "经营性资产占比",
+				Type: "line",
+				Y:    jingyingxingzichanProportion,
+			},
+		},
+	}, Char{
+		Name: "固定资产率",
+		Series: []Series{
+			{
+				Name: "固定资产率",
+				Type: "line",
+				Y:    fixedassetProportion,
+			},
+		},
+	}, Char{
+		Name: "预付款及其占营收的比例",
+		Series: []Series{
+			{
+				Name: "预付款",
+				Type: "bar",
+				Y:    prepayments,
+			},
+			{
+				Name: "预付款占营收比例",
+				Type: "line",
+				Y:    prepaymentsProportion,
+			},
+		},
 	})
 
 	// 处理请求并返回响应
 	c.JSON(200, gin.H{
-		"charts": charts,
+		"stock_charts": CharsResp{
+			Charts: charts,
+			X:      tableX,
+		},
 	})
 
 }
