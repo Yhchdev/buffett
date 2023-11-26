@@ -44,21 +44,22 @@ type CashflowData struct {
 	ReceiveOtherOperate       float64 `json:"RECEIVE_OTHER_OPERATE"`
 	OperateInflowOther        float64 `json:"OPERATE_INFLOW_OTHER"`
 	OperateInflowBalance      float64 `json:"OPERATE_INFLOW_BALANCE"`
-	TotalOperateInflow        float64 `json:"TOTAL_OPERATE_INFLOW"`
-	BuyServices               float64 `json:"BUY_SERVICES"`
-	LoanAdvanceAdd            float64 `json:"LOAN_ADVANCE_ADD"`
-	PbcInterbankAdd           float64 `json:"PBC_INTERBANK_ADD"`
-	PayOrigicCompensate       float64 `json:"PAY_ORIGIC_COMPENSATE"`
-	PayInterestCommission     float64 `json:"PAY_INTEREST_COMMISSION"`
-	PayPolicyBonus            float64 `json:"PAY_POLICY_BONUS"`
-	PayStaffCash              float64 `json:"PAY_STAFF_CASH"`
-	PayAllTax                 float64 `json:"PAY_ALL_TAX"`
-	PayOtherOperate           float64 `json:"PAY_OTHER_OPERATE"`
-	OperateOutflowOther       float64 `json:"OPERATE_OUTFLOW_OTHER"`
-	OperateOutflowBalance     float64 `json:"OPERATE_OUTFLOW_BALANCE"`
-	TotalOperateOutflow       float64 `json:"TOTAL_OPERATE_OUTFLOW"`
-	OperateNetcashOther       float64 `json:"OPERATE_NETCASH_OTHER"`
-	OperateNetcashBalance     float64 `json:"OPERATE_NETCASH_BALANCE"`
+	// 经营流入总计
+	TotalOperateInflow    float64 `json:"TOTAL_OPERATE_INFLOW"`
+	BuyServices           float64 `json:"BUY_SERVICES"`
+	LoanAdvanceAdd        float64 `json:"LOAN_ADVANCE_ADD"`
+	PbcInterbankAdd       float64 `json:"PBC_INTERBANK_ADD"`
+	PayOrigicCompensate   float64 `json:"PAY_ORIGIC_COMPENSATE"`
+	PayInterestCommission float64 `json:"PAY_INTEREST_COMMISSION"`
+	PayPolicyBonus        float64 `json:"PAY_POLICY_BONUS"`
+	PayStaffCash          float64 `json:"PAY_STAFF_CASH"`
+	PayAllTax             float64 `json:"PAY_ALL_TAX"`
+	PayOtherOperate       float64 `json:"PAY_OTHER_OPERATE"`
+	OperateOutflowOther   float64 `json:"OPERATE_OUTFLOW_OTHER"`
+	OperateOutflowBalance float64 `json:"OPERATE_OUTFLOW_BALANCE"`
+	TotalOperateOutflow   float64 `json:"TOTAL_OPERATE_OUTFLOW"`
+	OperateNetcashOther   float64 `json:"OPERATE_NETCASH_OTHER"`
+	OperateNetcashBalance float64 `json:"OPERATE_NETCASH_BALANCE"`
 	// 经营活动产生的现金流量净额
 	NetcashOperate           float64 `json:"NETCASH_OPERATE"`
 	WithdrawInvest           float64 `json:"WITHDRAW_INVEST"`
@@ -69,18 +70,19 @@ type CashflowData struct {
 	ReceiveOtherInvest       float64 `json:"RECEIVE_OTHER_INVEST"`
 	InvestInflowOther        float64 `json:"INVEST_INFLOW_OTHER"`
 	InvestInflowBalance      float64 `json:"INVEST_INFLOW_BALANCE"`
-	TotalInvestInflow        float64 `json:"TOTAL_INVEST_INFLOW"`
-	ConstructLongAsset       float64 `json:"CONSTRUCT_LONG_ASSET"`
-	InvestPayCash            float64 `json:"INVEST_PAY_CASH"`
-	PledgeLoanAdd            float64 `json:"PLEDGE_LOAN_ADD"`
-	ObtainSubsidiaryOther    float64 `json:"OBTAIN_SUBSIDIARY_OTHER"`
-	AddPledgeTimedeposits    float64 `json:"ADD_PLEDGE_TIMEDEPOSITS"`
-	PayOtherInvest           float64 `json:"PAY_OTHER_INVEST"`
-	InvestOutflowOther       float64 `json:"INVEST_OUTFLOW_OTHER"`
-	InvestOutflowBalance     float64 `json:"INVEST_OUTFLOW_BALANCE"`
-	TotalInvestOutflow       float64 `json:"TOTAL_INVEST_OUTFLOW"`
-	InvestNetcashOther       float64 `json:"INVEST_NETCASH_OTHER"`
-	InvestNetcashBalance     float64 `json:"INVEST_NETCASH_BALANCE"`
+	// 投资流入总计
+	TotalInvestInflow     float64 `json:"TOTAL_INVEST_INFLOW"`
+	ConstructLongAsset    float64 `json:"CONSTRUCT_LONG_ASSET"`
+	InvestPayCash         float64 `json:"INVEST_PAY_CASH"`
+	PledgeLoanAdd         float64 `json:"PLEDGE_LOAN_ADD"`
+	ObtainSubsidiaryOther float64 `json:"OBTAIN_SUBSIDIARY_OTHER"`
+	AddPledgeTimedeposits float64 `json:"ADD_PLEDGE_TIMEDEPOSITS"`
+	PayOtherInvest        float64 `json:"PAY_OTHER_INVEST"`
+	InvestOutflowOther    float64 `json:"INVEST_OUTFLOW_OTHER"`
+	InvestOutflowBalance  float64 `json:"INVEST_OUTFLOW_BALANCE"`
+	TotalInvestOutflow    float64 `json:"TOTAL_INVEST_OUTFLOW"`
+	InvestNetcashOther    float64 `json:"INVEST_NETCASH_OTHER"`
+	InvestNetcashBalance  float64 `json:"INVEST_NETCASH_BALANCE"`
 	// 投资活动产生的现金流量净额
 	NetcashInvest          float64 `json:"NETCASH_INVEST"`
 	AcceptInvestCash       float64 `json:"ACCEPT_INVEST_CASH"`
@@ -209,6 +211,7 @@ type CashflowData struct {
 	ReceiveOtherFinanceYoy       float64 `json:"RECEIVE_OTHER_FINANCE_YOY"`
 	FinanceInflowOtherYoy        float64 `json:"FINANCE_INFLOW_OTHER_YOY"`
 	FinanceInflowBalanceYoy      float64 `json:"FINANCE_INFLOW_BALANCE_YOY"`
+	//筹资流入小计
 	TotalFinanceInflowYoy        float64 `json:"TOTAL_FINANCE_INFLOW_YOY"`
 	PayDebtCashYoy               float64 `json:"PAY_DEBT_CASH_YOY"`
 	AssignDividendPorfitYoy      float64 `json:"ASSIGN_DIVIDEND_PORFIT_YOY"`

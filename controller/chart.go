@@ -23,16 +23,20 @@ type Char struct {
 }
 
 type Series struct {
-	Type     string        `json:"type"`     // 图的类型  line bar
-	Name     string        `json:"name"`     // 图的名称
-	Stack    string        `json:"stack"`    // 柱状图堆叠
-	Emphasis Emphasis      `json:"emphasis"` // 高亮
-	Y        []interface{} `json:"y"`
+	Type     string   `json:"type"`     // 图的类型  line bar
+	Name     string   `json:"name"`     // 图的名称
+	Stack    string   `json:"stack"`    // 柱状图堆叠
+	Emphasis Emphasis `json:"emphasis"` // 高亮
+	//MarkPoint []interface{} `json:"markPoint"`
+	Y     []interface{} `json:"y"`
+	YType string        `json:"YType"`
 }
 
 type Emphasis struct {
 	Focus string `json:"focus" default:"series"`
 }
+
+//type MarkPoint s
 
 func Chart(c *gin.Context) {
 
@@ -134,10 +138,22 @@ func Chart(c *gin.Context) {
 
 	netcashOperate := []interface{}{}
 	salesServices := []interface{}{}
+	portraits := []interface{}{}
+	netcashInvest := []interface{}{}
+	netcashFinance := []interface{}{}
+	totalInvestInflowProportions := []interface{}{}
+	totalOperateInflowProportions := []interface{}{}
+	totalFinanceInflowProportions := []interface{}{}
 
 	for _, item := range cashFlow {
 		netcashOperate = append(netcashOperate, utils.ConvertToBillions(item.NetcashOperate))
+		netcashInvest = append(netcashInvest, utils.ConvertToBillions(item.NetcashInvest))
+		netcashFinance = append(netcashFinance, utils.ConvertToBillions(item.NetcashFinance))
 		salesServices = append(salesServices, utils.ConvertToBillions(item.SalesServices))
+		totalInflow := item.TotalInvestInflow + item.TotalOperateInflow + item.TotalFinanceInflow
+		totalInvestInflowProportions = append(totalInvestInflowProportions, utils.FloatFormat(item.TotalInvestInflow/totalInflow))
+		totalOperateInflowProportions = append(totalOperateInflowProportions, utils.FloatFormat(item.TotalOperateInflow/totalInflow))
+		totalFinanceInflowProportions = append(totalFinanceInflowProportions, utils.FloatFormat(item.TotalFinanceInflow/totalInflow))
 	}
 
 	// 净现比
@@ -185,7 +201,7 @@ func Chart(c *gin.Context) {
 		prepaymentsProportion = append(prepaymentsProportion, utils.FloatFormat(utils.ConvertToBillions(item.PREPAYMENT)/cast.ToFloat64(Totaloperatereve[i])))
 	}
 
-	fmt.Println("MONETARYFUNDS", MONETARYFUNDS)
+	//fmt.Println("MONETARYFUNDS", MONETARYFUNDS)
 
 	charts := make([]Char, 0)
 
@@ -383,6 +399,91 @@ func Chart(c *gin.Context) {
 				Name: "预付款占营收比例",
 				Type: "line",
 				Y:    prepaymentsProportion,
+			},
+		},
+	}, Char{
+		Name: "公司现金流画像",
+		Series: []Series{
+			{
+				Name:  "公司类型",
+				Type:  "line",
+				Y:     portraits,
+				YType: "category",
+			},
+		},
+	}, Char{
+		Name: "现金流结构",
+		Series: []Series{
+			{
+				Name:     "经营活动产生的现金流净额",
+				Type:     "bar",
+				Emphasis: Emphasis{Focus: "series"},
+				Stack:    "total",
+				Y:        netcashOperate,
+			},
+			{
+				Name:     "投资活动产生的现金流净额",
+				Type:     "bar",
+				Emphasis: Emphasis{Focus: "series"},
+				Stack:    "total",
+				Y:        netcashInvest,
+			},
+			{
+				Name:     "筹资活动产生的现金流净额",
+				Type:     "bar",
+				Emphasis: Emphasis{Focus: "series"},
+				Stack:    "total",
+				Y:        netcashFinance,
+			},
+		},
+	}, Char{
+		Name: "资金流入构成分析",
+		Series: []Series{
+			{
+				Name:     "经营活动产生的现金流入占比",
+				Type:     "bar",
+				Emphasis: Emphasis{Focus: "series"},
+				Stack:    "total",
+				Y:        totalOperateInflowProportions,
+			},
+			{
+				Name:     "投资活动现金流入占比",
+				Type:     "bar",
+				Emphasis: Emphasis{Focus: "series"},
+				Stack:    "total",
+				Y:        totalInvestInflowProportions,
+			},
+			{
+				Name:     "筹资活动现金流入占比",
+				Type:     "bar",
+				Emphasis: Emphasis{Focus: "series"},
+				Stack:    "total",
+				Y:        totalFinanceInflowProportions,
+			},
+		},
+	}, Char{
+		Name: "资金流出构成分析",
+		Series: []Series{
+			{
+				Name:     "经营活动产生的现金流出占比",
+				Type:     "bar",
+				Emphasis: Emphasis{Focus: "series"},
+				Stack:    "total",
+				Y:        totalOperateInflowProportions,
+			},
+			{
+				Name:     "投资活动现金流出占比",
+				Type:     "bar",
+				Emphasis: Emphasis{Focus: "series"},
+				Stack:    "total",
+				Y:        totalInvestInflowProportions,
+			},
+			{
+				Name:     "筹资活动现金流出占比",
+				Type:     "bar",
+				Emphasis: Emphasis{Focus: "series"},
+				Stack:    "total",
+				Y:        totalFinanceInflowProportions,
 			},
 		},
 	})
