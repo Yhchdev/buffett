@@ -45,7 +45,8 @@ type CashflowData struct {
 	OperateInflowOther        float64 `json:"OPERATE_INFLOW_OTHER"`
 	OperateInflowBalance      float64 `json:"OPERATE_INFLOW_BALANCE"`
 	// 经营流入总计
-	TotalOperateInflow    float64 `json:"TOTAL_OPERATE_INFLOW"`
+	TotalOperateInflow float64 `json:"TOTAL_OPERATE_INFLOW"`
+	// 购买商品，接受劳务支付的现金
 	BuyServices           float64 `json:"BUY_SERVICES"`
 	LoanAdvanceAdd        float64 `json:"LOAN_ADVANCE_ADD"`
 	PbcInterbankAdd       float64 `json:"PBC_INTERBANK_ADD"`

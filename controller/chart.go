@@ -109,6 +109,9 @@ func Chart(c *gin.Context) {
 	Parentnetprofittz := []interface{}{}
 	Xsmll := []interface{}{}
 	Xsjll := []interface{}{}
+	roekcjqs := []interface{}{}
+	zzcjlls := []interface{}{}
+	roics := []interface{}{}
 
 	for _, item := range usefulHistory {
 		tableX = append(tableX, item.ReportYear)
@@ -120,6 +123,10 @@ func Chart(c *gin.Context) {
 		Xsmll = append(Xsmll, utils.FloatFormat(item.Xsmll))
 		Xsjll = append(Xsjll, utils.FloatFormat(item.Xsjll))
 		Parentnetprofit = append(Parentnetprofit, utils.ConvertToBillions(item.Parentnetprofit))
+
+		roekcjqs = append(roekcjqs, utils.FloatFormat(item.Roekcjq))
+		zzcjlls = append(zzcjlls, utils.FloatFormat(item.Zzcjll))
+		roics = append(roics, utils.FloatFormat(item.Roic))
 	}
 
 	// 核心利润
@@ -144,6 +151,7 @@ func Chart(c *gin.Context) {
 	totalInvestInflowProportions := []interface{}{}
 	totalOperateInflowProportions := []interface{}{}
 	totalFinanceInflowProportions := []interface{}{}
+	buyServicesCompareSales := []interface{}{}
 
 	for _, item := range cashFlow {
 		netcashOperate = append(netcashOperate, utils.ConvertToBillions(item.NetcashOperate))
@@ -154,6 +162,7 @@ func Chart(c *gin.Context) {
 		totalInvestInflowProportions = append(totalInvestInflowProportions, utils.FloatFormat(item.TotalInvestInflow/totalInflow))
 		totalOperateInflowProportions = append(totalOperateInflowProportions, utils.FloatFormat(item.TotalOperateInflow/totalInflow))
 		totalFinanceInflowProportions = append(totalFinanceInflowProportions, utils.FloatFormat(item.TotalFinanceInflow/totalInflow))
+		buyServicesCompareSales = append(buyServicesCompareSales, utils.FloatFormat(item.BuyServices/item.SalesServices))
 	}
 
 	// 净现比
@@ -484,6 +493,34 @@ func Chart(c *gin.Context) {
 				Emphasis: Emphasis{Focus: "series"},
 				Stack:    "total",
 				Y:        totalFinanceInflowProportions,
+			},
+		},
+	}, Char{
+		Name: "现金购销比",
+		Series: []Series{
+			{
+				Name: "现金购销比",
+				Type: "line",
+				Y:    buyServicesCompareSales,
+			},
+		},
+	}, Char{
+		Name: "盈利能力分析",
+		Series: []Series{
+			{
+				Name: "ROIC(资本回报率)",
+				Type: "line",
+				Y:    roics,
+			},
+			{
+				Name: "ROA(总资产收益率)",
+				Type: "line",
+				Y:    zzcjlls,
+			},
+			{
+				Name: "ROE(净资产收益率)",
+				Type: "line",
+				Y:    roekcjqs,
 			},
 		},
 	})
