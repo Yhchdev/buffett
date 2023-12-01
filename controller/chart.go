@@ -196,6 +196,9 @@ func Chart(c *gin.Context) {
 
 	totalparentequity := []interface{}{}
 
+	totalcurrentassets := []interface{}{}
+	totalcurrentliabs := []interface{}{}
+
 	for i, item := range balance {
 		LONGEQUITYINVEST = append(LONGEQUITYINVEST, utils.ConvertToBillions(cast.ToFloat64(item.LONGEQUITYINVEST)))
 		MONETARYFUNDS = append(MONETARYFUNDS, utils.ConvertToBillions(item.MONETARYFUNDS))
@@ -211,12 +214,22 @@ func Chart(c *gin.Context) {
 		prepayments = append(prepayments, utils.ConvertToBillions(item.PREPAYMENT))
 		prepaymentsProportion = append(prepaymentsProportion, utils.FloatFormat(utils.ConvertToBillions(item.PREPAYMENT)/cast.ToFloat64(Totaloperatereve[i])))
 		totalparentequity = append(totalparentequity, utils.ConvertToBillions(item.TOTALPARENTEQUITY))
+
+		totalcurrentassets = append(totalcurrentassets, item.TOTALCURRENTASSETS)
+		totalcurrentliabs = append(totalcurrentliabs, item.TOTALCURRENTLIAB)
 	}
 
 	//  资本收益率
 	zibenshouyis := []interface{}{}
+	// 流动比率
+	liudongs := []interface{}{}
+
+	// 现金比率
+	cashcfuzais := []interface{}{}
 	for i := 0; i < len(totalparentequity); i++ {
 		zibenshouyis = append(zibenshouyis, utils.FloatFormat(cast.ToFloat64(KCFJCXSYJLR[i])/cast.ToFloat64(totalparentequity[i])))
+		liudongs = append(liudongs, utils.FloatFormat(cast.ToFloat64(totalcurrentassets[i])/cast.ToFloat64(totalcurrentliabs[i])))
+		cashcfuzais = append(cashcfuzais, utils.FloatFormat(cast.ToFloat64(MONETARYFUNDS[i])/utils.ConvertToBillions(cast.ToFloat64(totalcurrentliabs[i]))))
 	}
 
 	//fmt.Println("MONETARYFUNDS", MONETARYFUNDS)
@@ -553,6 +566,20 @@ func Chart(c *gin.Context) {
 				Name: "资本收益率",
 				Type: "line",
 				Y:    zibenshouyis,
+			},
+		},
+	}, Char{
+		Name: "短期偿债能力分析",
+		Series: []Series{
+			{
+				Name: "流动比率",
+				Type: "line",
+				Y:    liudongs,
+			},
+			{
+				Name: "现金比率",
+				Type: "line",
+				Y:    cashcfuzais,
 			},
 		},
 	})
