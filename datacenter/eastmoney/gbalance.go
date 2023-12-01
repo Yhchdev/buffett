@@ -149,34 +149,35 @@ type BalanceData struct {
 	PREFERREDSHARESPAYBALE  interface{} `json:"PREFERRED_SHARES_PAYBALE"`
 	PREMIUMRECE             interface{} `json:"PREMIUM_RECE"`
 	// 预付
-	PREPAYMENT                    float64     `json:"PREPAYMENT"`
-	PRODUCTIVEBIOLOGYASSET        interface{} `json:"PRODUCTIVE_BIOLOGY_ASSET"`
-	PROJECTMATERIAL               interface{} `json:"PROJECT_MATERIAL"`
-	RCRESERVERECE                 interface{} `json:"RC_RESERVE_RECE"`
-	REINSUREPAYABLE               interface{} `json:"REINSURE_PAYABLE"`
-	REINSURERECE                  interface{} `json:"REINSURE_RECE"`
-	SELLREPOFINASSET              interface{} `json:"SELL_REPO_FINASSET"`
-	SETTLEEXCESSRESERVE           interface{} `json:"SETTLE_EXCESS_RESERVE"`
-	SHARECAPITAL                  int         `json:"SHARE_CAPITAL"`
-	SHORTBONDPAYABLE              interface{} `json:"SHORT_BOND_PAYABLE"`
-	SHORTFINPAYABLE               interface{} `json:"SHORT_FIN_PAYABLE"`
-	SHORTLOAN                     interface{} `json:"SHORT_LOAN"`
-	SPECIALPAYABLE                interface{} `json:"SPECIAL_PAYABLE"`
-	SPECIALRESERVE                float64     `json:"SPECIAL_RESERVE"`
-	STAFFSALARYPAYABLE            float64     `json:"STAFF_SALARY_PAYABLE"`
-	SUBSIDYRECE                   interface{} `json:"SUBSIDY_RECE"`
-	SURPLUSRESERVE                float64     `json:"SURPLUS_RESERVE"`
-	TAXPAYABLE                    float64     `json:"TAX_PAYABLE"`
-	TOTALASSETS                   float64     `json:"TOTAL_ASSETS"`
-	TOTALCURRENTASSETS            float64     `json:"TOTAL_CURRENT_ASSETS"`
-	TOTALCURRENTLIAB              float64     `json:"TOTAL_CURRENT_LIAB"`
-	TOTALEQUITY                   float64     `json:"TOTAL_EQUITY"`
-	TOTALLIABEQUITY               float64     `json:"TOTAL_LIAB_EQUITY"`
-	TOTALLIABILITIES              float64     `json:"TOTAL_LIABILITIES"`
-	TOTALNONCURRENTASSETS         float64     `json:"TOTAL_NONCURRENT_ASSETS"`
-	TOTALNONCURRENTLIAB           float64     `json:"TOTAL_NONCURRENT_LIAB"`
-	TOTALOTHERPAYABLE             float64     `json:"TOTAL_OTHER_PAYABLE"`
-	TOTALOTHERRECE                float64     `json:"TOTAL_OTHER_RECE"`
+	PREPAYMENT             float64     `json:"PREPAYMENT"`
+	PRODUCTIVEBIOLOGYASSET interface{} `json:"PRODUCTIVE_BIOLOGY_ASSET"`
+	PROJECTMATERIAL        interface{} `json:"PROJECT_MATERIAL"`
+	RCRESERVERECE          interface{} `json:"RC_RESERVE_RECE"`
+	REINSUREPAYABLE        interface{} `json:"REINSURE_PAYABLE"`
+	REINSURERECE           interface{} `json:"REINSURE_RECE"`
+	SELLREPOFINASSET       interface{} `json:"SELL_REPO_FINASSET"`
+	SETTLEEXCESSRESERVE    interface{} `json:"SETTLE_EXCESS_RESERVE"`
+	SHARECAPITAL           int         `json:"SHARE_CAPITAL"`
+	SHORTBONDPAYABLE       interface{} `json:"SHORT_BOND_PAYABLE"`
+	SHORTFINPAYABLE        interface{} `json:"SHORT_FIN_PAYABLE"`
+	SHORTLOAN              interface{} `json:"SHORT_LOAN"`
+	SPECIALPAYABLE         interface{} `json:"SPECIAL_PAYABLE"`
+	SPECIALRESERVE         float64     `json:"SPECIAL_RESERVE"`
+	STAFFSALARYPAYABLE     float64     `json:"STAFF_SALARY_PAYABLE"`
+	SUBSIDYRECE            interface{} `json:"SUBSIDY_RECE"`
+	SURPLUSRESERVE         float64     `json:"SURPLUS_RESERVE"`
+	TAXPAYABLE             float64     `json:"TAX_PAYABLE"`
+	TOTALASSETS            float64     `json:"TOTAL_ASSETS"`
+	TOTALCURRENTASSETS     float64     `json:"TOTAL_CURRENT_ASSETS"`
+	TOTALCURRENTLIAB       float64     `json:"TOTAL_CURRENT_LIAB"`
+	TOTALEQUITY            float64     `json:"TOTAL_EQUITY"`
+	TOTALLIABEQUITY        float64     `json:"TOTAL_LIAB_EQUITY"`
+	TOTALLIABILITIES       float64     `json:"TOTAL_LIABILITIES"`
+	TOTALNONCURRENTASSETS  float64     `json:"TOTAL_NONCURRENT_ASSETS"`
+	TOTALNONCURRENTLIAB    float64     `json:"TOTAL_NONCURRENT_LIAB"`
+	TOTALOTHERPAYABLE      float64     `json:"TOTAL_OTHER_PAYABLE"`
+	TOTALOTHERRECE         float64     `json:"TOTAL_OTHER_RECE"`
+	// 归属于母公司股东权益合计 约等于 净资产
 	TOTALPARENTEQUITY             float64     `json:"TOTAL_PARENT_EQUITY"`
 	TRADEFINASSET                 interface{} `json:"TRADE_FINASSET"`
 	TRADEFINASSETNOTFVTPL         float64     `json:"TRADE_FINASSET_NOTFVTPL"`

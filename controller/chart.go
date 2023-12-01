@@ -194,6 +194,8 @@ func Chart(c *gin.Context) {
 	prepayments := []interface{}{}
 	prepaymentsProportion := []interface{}{}
 
+	totalparentequity := []interface{}{}
+
 	for i, item := range balance {
 		LONGEQUITYINVEST = append(LONGEQUITYINVEST, utils.ConvertToBillions(cast.ToFloat64(item.LONGEQUITYINVEST)))
 		MONETARYFUNDS = append(MONETARYFUNDS, utils.ConvertToBillions(item.MONETARYFUNDS))
@@ -208,6 +210,13 @@ func Chart(c *gin.Context) {
 		fixedassetProportion = append(fixedassetProportion, utils.FloatFormat(item.FIXEDASSET/item.TOTALASSETS))
 		prepayments = append(prepayments, utils.ConvertToBillions(item.PREPAYMENT))
 		prepaymentsProportion = append(prepaymentsProportion, utils.FloatFormat(utils.ConvertToBillions(item.PREPAYMENT)/cast.ToFloat64(Totaloperatereve[i])))
+		totalparentequity = append(totalparentequity, utils.ConvertToBillions(item.TOTALPARENTEQUITY))
+	}
+
+	//  资本收益率
+	zibenshouyis := []interface{}{}
+	for i := 0; i < len(totalparentequity); i++ {
+		zibenshouyis = append(zibenshouyis, utils.FloatFormat(cast.ToFloat64(KCFJCXSYJLR[i])/cast.ToFloat64(totalparentequity[i])))
 	}
 
 	//fmt.Println("MONETARYFUNDS", MONETARYFUNDS)
@@ -521,6 +530,29 @@ func Chart(c *gin.Context) {
 				Name: "ROE(净资产收益率)",
 				Type: "line",
 				Y:    roekcjqs,
+			},
+		},
+	}, Char{
+		Name: "净资产和ROE",
+		Series: []Series{
+			{
+				Name: "ROA(总资产收益率)",
+				Type: "line",
+				Y:    zzcjlls,
+			},
+			{
+				Name: "净资产",
+				Type: "bar",
+				Y:    totalparentequity,
+			},
+		},
+	}, Char{
+		Name: "资本收益率",
+		Series: []Series{
+			{
+				Name: "资本收益率",
+				Type: "line",
+				Y:    zibenshouyis,
 			},
 		},
 	})
