@@ -199,6 +199,9 @@ func Chart(c *gin.Context) {
 	totalcurrentassets := []interface{}{}
 	totalcurrentliabs := []interface{}{}
 
+	// 长期资本负载率
+	longTermDebtRatios := []interface{}{}
+
 	for i, item := range balance {
 		LONGEQUITYINVEST = append(LONGEQUITYINVEST, utils.ConvertToBillions(cast.ToFloat64(item.LONGEQUITYINVEST)))
 		MONETARYFUNDS = append(MONETARYFUNDS, utils.ConvertToBillions(item.MONETARYFUNDS))
@@ -217,6 +220,10 @@ func Chart(c *gin.Context) {
 
 		totalcurrentassets = append(totalcurrentassets, item.TOTALCURRENTASSETS)
 		totalcurrentliabs = append(totalcurrentliabs, item.TOTALCURRENTLIAB)
+
+		fmt.Println(item.TOTALNONCURRENTLIABYOY)
+
+		longTermDebtRatios = append(longTermDebtRatios, utils.FloatFormat(item.TOTALNONCURRENTLIAB/(item.TOTALNONCURRENTLIAB+item.TOTALEQUITY)))
 	}
 
 	//  资本收益率
@@ -580,6 +587,15 @@ func Chart(c *gin.Context) {
 				Name: "现金比率",
 				Type: "line",
 				Y:    cashcfuzais,
+			},
+		},
+	}, Char{
+		Name: "长期偿债能力分析",
+		Series: []Series{
+			{
+				Name: "长期资本负债率",
+				Type: "line",
+				Y:    longTermDebtRatios,
 			},
 		},
 	})

@@ -96,9 +96,12 @@ func main() {
 	router.GET("/chart", controller.Chart)
 	router.GET("/hot_stock", controller.HotStock)
 
+	router.GET("/wx/check", controller.WxCheck)
+	//router.POST("/wx/check", controller.WxCheck)
+
 	// 微信公众号 关注 & 取消关注 callback
-	router.GET("/wx/follow", controller.Follow)
-	router.POST("/wx/unfollow", controller.Unfollow)
+	router.POST("/wx/check", controller.Follow)
+	//router.POST("/wx/unfollow", controller.Unfollow)
 
 	// 微信支付成功 callback
 	router.POST("/wx/pay", controller.Pay)

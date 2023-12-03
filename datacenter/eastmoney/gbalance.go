@@ -171,7 +171,8 @@ type BalanceData struct {
 	// 流动资产总计
 	TOTALCURRENTASSETS float64 `json:"TOTAL_CURRENT_ASSETS"`
 	// 流动负债总计
-	TOTALCURRENTLIAB      float64 `json:"TOTAL_CURRENT_LIAB"`
+	TOTALCURRENTLIAB float64 `json:"TOTAL_CURRENT_LIAB"`
+	// 股东权益合计
 	TOTALEQUITY           float64 `json:"TOTAL_EQUITY"`
 	TOTALLIABEQUITY       float64 `json:"TOTAL_LIAB_EQUITY"`
 	TOTALLIABILITIES      float64 `json:"TOTAL_LIABILITIES"`
@@ -329,21 +330,22 @@ type BalanceData struct {
 	TOTALLIABEQUITYYOY            float64     `json:"TOTAL_LIAB_EQUITY_YOY"`
 	TOTALLIABILITIESYOY           float64     `json:"TOTAL_LIABILITIES_YOY"`
 	TOTALNONCURRENTASSETSYOY      float64     `json:"TOTAL_NONCURRENT_ASSETS_YOY"`
-	TOTALNONCURRENTLIABYOY        float64     `json:"TOTAL_NONCURRENT_LIAB_YOY"`
-	TOTALOTHERPAYABLEYOY          float64     `json:"TOTAL_OTHER_PAYABLE_YOY"`
-	TOTALOTHERRECEYOY             float64     `json:"TOTAL_OTHER_RECE_YOY"`
-	TOTALPARENTEQUITYYOY          float64     `json:"TOTAL_PARENT_EQUITY_YOY"`
-	TRADEFINASSETNOTFVTPLYOY      float64     `json:"TRADE_FINASSET_NOTFVTPL_YOY"`
-	TRADEFINASSETYOY              interface{} `json:"TRADE_FINASSET_YOY"`
-	TRADEFINLIABNOTFVTPLYOY       interface{} `json:"TRADE_FINLIAB_NOTFVTPL_YOY"`
-	TRADEFINLIABYOY               interface{} `json:"TRADE_FINLIAB_YOY"`
-	TREASURYSHARESYOY             float64     `json:"TREASURY_SHARES_YOY"`
-	UNASSIGNRPOFITYOY             float64     `json:"UNASSIGN_RPOFIT_YOY"`
-	UNCONFIRMINVESTLOSSYOY        interface{} `json:"UNCONFIRM_INVEST_LOSS_YOY"`
-	USERIGHTASSETYOY              float64     `json:"USERIGHT_ASSET_YOY"`
-	OPINIONTYPE                   string      `json:"OPINION_TYPE"`
-	OSOPINIONTYPE                 interface{} `json:"OSOPINION_TYPE"`
-	LISTINGSTATE                  string      `json:"LISTING_STATE"`
+	// 非流动负债合计
+	TOTALNONCURRENTLIABYOY   float64     `json:"TOTAL_NONCURRENT_LIAB_YOY"`
+	TOTALOTHERPAYABLEYOY     float64     `json:"TOTAL_OTHER_PAYABLE_YOY"`
+	TOTALOTHERRECEYOY        float64     `json:"TOTAL_OTHER_RECE_YOY"`
+	TOTALPARENTEQUITYYOY     float64     `json:"TOTAL_PARENT_EQUITY_YOY"`
+	TRADEFINASSETNOTFVTPLYOY float64     `json:"TRADE_FINASSET_NOTFVTPL_YOY"`
+	TRADEFINASSETYOY         interface{} `json:"TRADE_FINASSET_YOY"`
+	TRADEFINLIABNOTFVTPLYOY  interface{} `json:"TRADE_FINLIAB_NOTFVTPL_YOY"`
+	TRADEFINLIABYOY          interface{} `json:"TRADE_FINLIAB_YOY"`
+	TREASURYSHARESYOY        float64     `json:"TREASURY_SHARES_YOY"`
+	UNASSIGNRPOFITYOY        float64     `json:"UNASSIGN_RPOFIT_YOY"`
+	UNCONFIRMINVESTLOSSYOY   interface{} `json:"UNCONFIRM_INVEST_LOSS_YOY"`
+	USERIGHTASSETYOY         float64     `json:"USERIGHT_ASSET_YOY"`
+	OPINIONTYPE              string      `json:"OPINION_TYPE"`
+	OSOPINIONTYPE            interface{} `json:"OSOPINION_TYPE"`
+	LISTINGSTATE             string      `json:"LISTING_STATE"`
 }
 
 type BalanceDataList []BalanceData
