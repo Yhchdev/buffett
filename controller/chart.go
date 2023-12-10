@@ -113,6 +113,9 @@ func Chart(c *gin.Context) {
 	zzcjlls := []interface{}{}
 	roics := []interface{}{}
 
+	// 存货周转率
+	chzzls := []interface{}{}
+
 	for _, item := range usefulHistory {
 		tableX = append(tableX, item.ReportYear)
 		KCFJCXSYJLR = append(KCFJCXSYJLR, utils.ConvertToBillions(item.Kcfjcxsyjlr))
@@ -127,6 +130,8 @@ func Chart(c *gin.Context) {
 		roekcjqs = append(roekcjqs, utils.FloatFormat(item.Roekcjq))
 		zzcjlls = append(zzcjlls, utils.FloatFormat(item.Zzcjll))
 		roics = append(roics, utils.FloatFormat(item.Roic))
+
+		chzzls = append(chzzls, utils.FloatFormat(item.Chzzl))
 	}
 
 	// 核心利润
@@ -163,6 +168,7 @@ func Chart(c *gin.Context) {
 		totalOperateInflowProportions = append(totalOperateInflowProportions, utils.FloatFormat(item.TotalOperateInflow/totalInflow))
 		totalFinanceInflowProportions = append(totalFinanceInflowProportions, utils.FloatFormat(item.TotalFinanceInflow/totalInflow))
 		buyServicesCompareSales = append(buyServicesCompareSales, utils.FloatFormat(item.BuyServices/item.SalesServices))
+		portraits = append(portraits, utils.CorporatePortrait(item.NetcashOperate, item.NetcashInvest, item.NetcashFinance))
 	}
 
 	// 净现比
@@ -201,6 +207,16 @@ func Chart(c *gin.Context) {
 
 	// 长期资本负载率
 	longTermDebtRatios := []interface{}{}
+	// 资产负载率
+	assetsLiabilities := []interface{}{}
+	// 有息负债率
+	interestBearing := []interface{}{}
+
+	// 有息负债
+	youxiLiabilities := []interface{}{}
+
+	// 货币资金
+	monetaryfunds := []interface{}{}
 
 	for i, item := range balance {
 		LONGEQUITYINVEST = append(LONGEQUITYINVEST, utils.ConvertToBillions(cast.ToFloat64(item.LONGEQUITYINVEST)))
@@ -221,9 +237,14 @@ func Chart(c *gin.Context) {
 		totalcurrentassets = append(totalcurrentassets, item.TOTALCURRENTASSETS)
 		totalcurrentliabs = append(totalcurrentliabs, item.TOTALCURRENTLIAB)
 
-		fmt.Println(item.TOTALNONCURRENTLIABYOY)
-
 		longTermDebtRatios = append(longTermDebtRatios, utils.FloatFormat(item.TOTALNONCURRENTLIAB/(item.TOTALNONCURRENTLIAB+item.TOTALEQUITY)))
+
+		assetsLiabilities = append(assetsLiabilities, utils.FloatFormat(item.TOTALLIABILITIES/item.TOTALASSETS))
+
+		interestBearing = append(interestBearing, utils.FloatFormat(item.NONCURRENTLIAB1YEAR/item.TOTALLIABILITIES))
+		youxiLiabilities = append(youxiLiabilities, utils.ConvertToBillions(item.NONCURRENTLIAB1YEAR))
+
+		monetaryfunds = append(monetaryfunds, utils.ConvertToBillions(item.MONETARYFUNDS))
 	}
 
 	//  资本收益率
@@ -261,99 +282,114 @@ func Chart(c *gin.Context) {
 		Name: "营业收入及其增长率",
 		Series: []Series{
 			{
-				Name: "营业收入",
-				Type: "bar",
-				Y:    Totaloperatereve,
+				Name:  "营业收入",
+				Type:  "bar",
+				Y:     Totaloperatereve,
+				YType: "value",
 			},
 			{
-				Name: "增长率",
-				Type: "line",
-				Y:    Totaloperaterevetz,
+				Name:  "增长率",
+				Type:  "line",
+				Y:     Totaloperaterevetz,
+				YType: "value",
 			},
 		},
 	}, Char{
 		Name: "盈利增长能力",
 		Series: []Series{
 			{
-				Name: "营业收入增长率",
-				Type: "line",
-				Y:    Totaloperaterevetz,
+				Name:  "营业收入增长率",
+				Type:  "line",
+				Y:     Totaloperaterevetz,
+				YType: "value",
 			},
 			{
-				Name: "净利润增长率",
-				Type: "line",
-				Y:    Parentnetprofittz,
+				Name:  "净利润增长率",
+				Type:  "line",
+				Y:     Parentnetprofittz,
+				YType: "value",
 			},
 			{
-				Name: "扣非净利润增长率",
-				Type: "line",
-				Y:    KCFJCXSYJLRTZ,
+				Name:  "扣非净利润增长率",
+				Type:  "line",
+				Y:     KCFJCXSYJLRTZ,
+				YType: "value",
 			},
 		},
 	}, Char{
 		Name: "盈利能力",
 		Series: []Series{
 			{
-				Name: "毛利率",
-				Type: "line",
-				Y:    Xsmll,
+				Name:  "毛利率",
+				Type:  "line",
+				Y:     Xsmll,
+				YType: "value",
 			},
 			{
-				Name: "净利率",
-				Type: "line",
-				Y:    Xsjll,
+				Name:  "净利率",
+				Type:  "line",
+				Y:     Xsjll,
+				YType: "value",
 			},
 		},
 	}, Char{
 		Name: "核心净利润及其贡献率",
 		Series: []Series{
 			{
-				Name: "核心净利润",
-				Type: "bar",
-				Y:    coreProfit,
+				Name:  "核心净利润",
+				Type:  "bar",
+				Y:     coreProfit,
+				YType: "value",
 			},
 			{
-				Name: "核心净利润率",
-				Type: "line",
-				Y:    coreProfitCompareOperateIncome,
+				Name:  "核心净利润率",
+				Type:  "line",
+				Y:     coreProfitCompareOperateIncome,
+				YType: "value",
 			},
 		},
 	}, Char{
 		Name: "净利润与营收现金净流量",
 		Series: []Series{
 			{
-				Name: "经营活动净流量",
-				Type: "line",
-				Y:    netcashOperate,
+				Name:  "经营活动净流量",
+				Type:  "line",
+				Y:     netcashOperate,
+				YType: "value",
 			},
 			{
-				Name: "净利润",
-				Type: "line",
-				Y:    Parentnetprofit,
+				Name:  "净利润",
+				Type:  "line",
+				Y:     Parentnetprofit,
+				YType: "value",
 			},
 			{
-				Name: "扣非净利润",
-				Type: "line",
-				Y:    KCFJCXSYJLR,
+				Name:  "扣非净利润",
+				Type:  "line",
+				Y:     KCFJCXSYJLR,
+				YType: "value",
 			},
 		},
 	}, Char{
 		Name: "业绩真实性分析",
 		Series: []Series{
 			{
-				Name: "净现比",
-				Type: "line",
-				Y:    netcashOperateCompareKCFJCXSYJLR,
+				Name:  "净现比",
+				Type:  "line",
+				Y:     netcashOperateCompareKCFJCXSYJLR,
+				YType: "value",
 			},
 			{
-				Name: "核现比",
-				Type: "line",
-				Y:    coreProfitCompareKCFJCXSYJLR,
+				Name:  "核现比",
+				Type:  "line",
+				Y:     coreProfitCompareKCFJCXSYJLR,
+				YType: "value",
 			},
 			{
-				Name: "收现比",
-				Type: "line",
-				Y:    salesServicesCompareTotaloperatereve,
+				Name:  "收现比",
+				Type:  "line",
+				Y:     salesServicesCompareTotaloperatereve,
+				YType: "value",
 			},
 		},
 	}, Char{
@@ -365,6 +401,7 @@ func Chart(c *gin.Context) {
 				Emphasis: Emphasis{Focus: "series"},
 				Stack:    "total",
 				Y:        LONGEQUITYINVEST,
+				YType:    "value",
 			},
 			{
 				Name:     "货币资金",
@@ -372,6 +409,7 @@ func Chart(c *gin.Context) {
 				Emphasis: Emphasis{Focus: "series"},
 				Stack:    "total",
 				Y:        MONETARYFUNDS,
+				YType:    "value",
 			},
 			{
 				Name:     "存货",
@@ -379,6 +417,7 @@ func Chart(c *gin.Context) {
 				Emphasis: Emphasis{Focus: "series"},
 				Stack:    "total",
 				Y:        INVENTORY,
+				YType:    "value",
 			},
 			{
 				Name:     "在建工程",
@@ -386,6 +425,7 @@ func Chart(c *gin.Context) {
 				Emphasis: Emphasis{Focus: "series"},
 				Stack:    "total",
 				Y:        CIP,
+				YType:    "value",
 			},
 			{
 				Name:     "固定资产",
@@ -393,6 +433,7 @@ func Chart(c *gin.Context) {
 				Emphasis: Emphasis{Focus: "series"},
 				Stack:    "total",
 				Y:        FIXEDASSET,
+				YType:    "value",
 			},
 			{
 				Name:     "应收账款",
@@ -400,43 +441,49 @@ func Chart(c *gin.Context) {
 				Emphasis: Emphasis{Focus: "series"},
 				Stack:    "total",
 				Y:        NOTEACCOUNTSRECE,
+				YType:    "value",
 			},
 		},
 	}, Char{
 		Name: "经营性资产及其占比",
 		Series: []Series{
 			{
-				Name: "经营性资产",
-				Type: "bar",
-				Y:    jingyingxingzichans,
+				Name:  "经营性资产",
+				Type:  "bar",
+				Y:     jingyingxingzichans,
+				YType: "value",
 			},
 			{
-				Name: "经营性资产占比",
-				Type: "line",
-				Y:    jingyingxingzichanProportion,
+				Name:  "经营性资产占比",
+				Type:  "line",
+				Y:     jingyingxingzichanProportion,
+				YType: "value",
 			},
 		},
 	}, Char{
 		Name: "固定资产率",
 		Series: []Series{
 			{
-				Name: "固定资产率",
-				Type: "line",
-				Y:    fixedassetProportion,
+				Name:  "固定资产率",
+				Type:  "line",
+				Y:     fixedassetProportion,
+				YType: "value",
 			},
 		},
 	}, Char{
 		Name: "预付款及其占营收的比例",
 		Series: []Series{
 			{
-				Name: "预付款",
-				Type: "bar",
-				Y:    prepayments,
+				Name:  "预付款",
+				Type:  "bar",
+				Y:     prepayments,
+				YType: "value",
 			},
 			{
-				Name: "预付款占营收比例",
-				Type: "line",
-				Y:    prepaymentsProportion,
+				Name:  "预付款占营收比例",
+				Type:  "line",
+				Y:     prepaymentsProportion,
+				YType: "value",
 			},
 		},
 	}, Char{
@@ -596,6 +643,33 @@ func Chart(c *gin.Context) {
 				Name: "长期资本负债率",
 				Type: "line",
 				Y:    longTermDebtRatios,
+			},
+		},
+	}, Char{
+		Name: "现金和有息负债",
+		Series: []Series{
+			{
+				Name:     "现金和现金等价物",
+				Type:     "bar",
+				Emphasis: Emphasis{Focus: "series"},
+				Stack:    "total",
+				Y:        monetaryfunds,
+			},
+			{
+				Name:     "有利息负债",
+				Type:     "bar",
+				Emphasis: Emphasis{Focus: "series"},
+				Stack:    "total",
+				Y:        youxiLiabilities,
+			},
+		},
+	}, Char{
+		Name: "存货周转率",
+		Series: []Series{
+			{
+				Name: "存货周转率",
+				Type: "line",
+				Y:    chzzls,
 			},
 		},
 	})
