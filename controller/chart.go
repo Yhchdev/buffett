@@ -115,6 +115,8 @@ func Chart(c *gin.Context) {
 
 	// 存货周转率
 	chzzls := []interface{}{}
+	// 总资产周转率
+	toazzl := []interface{}{}
 
 	for _, item := range usefulHistory {
 		tableX = append(tableX, item.ReportYear)
@@ -132,6 +134,7 @@ func Chart(c *gin.Context) {
 		roics = append(roics, utils.FloatFormat(item.Roic))
 
 		chzzls = append(chzzls, utils.FloatFormat(item.Chzzl))
+		toazzl = append(toazzl, utils.FloatFormat(item.Toazzl))
 	}
 
 	// 核心利润
@@ -217,6 +220,10 @@ func Chart(c *gin.Context) {
 
 	// 货币资金
 	monetaryfunds := []interface{}{}
+	// 平均流动资产
+	averageTotalcurrentassets := []interface{}{}
+	// 平均固定资产
+	averageFixedasset := []interface{}{}
 
 	for i, item := range balance {
 		LONGEQUITYINVEST = append(LONGEQUITYINVEST, utils.ConvertToBillions(cast.ToFloat64(item.LONGEQUITYINVEST)))
@@ -245,6 +252,14 @@ func Chart(c *gin.Context) {
 		youxiLiabilities = append(youxiLiabilities, utils.ConvertToBillions(item.NONCURRENTLIAB1YEAR))
 
 		monetaryfunds = append(monetaryfunds, utils.ConvertToBillions(item.MONETARYFUNDS))
+
+		if i == 0 {
+			averageTotalcurrentassets = append(averageTotalcurrentassets, item.TOTALCURRENTASSETS)
+			averageFixedasset = append(averageFixedasset, item.FIXEDASSET)
+		} else {
+			averageTotalcurrentassets = append(averageTotalcurrentassets, (item.TOTALCURRENTASSETS+balance[i-1].TOTALCURRENTASSETS)/2)
+			averageFixedasset = append(averageFixedasset, (item.FIXEDASSET+balance[i-1].FIXEDASSET)/2)
+		}
 	}
 
 	//  资本收益率
@@ -254,10 +269,19 @@ func Chart(c *gin.Context) {
 
 	// 现金比率
 	cashcfuzais := []interface{}{}
+
+	// 流动资产周转率
+	currentAssetTurnoverRatio := []interface{}{}
+
+	// 固定资产周转率
+	fixedAssetTurnoverRatio := []interface{}{}
+
 	for i := 0; i < len(totalparentequity); i++ {
 		zibenshouyis = append(zibenshouyis, utils.FloatFormat(cast.ToFloat64(KCFJCXSYJLR[i])/cast.ToFloat64(totalparentequity[i])))
 		liudongs = append(liudongs, utils.FloatFormat(cast.ToFloat64(totalcurrentassets[i])/cast.ToFloat64(totalcurrentliabs[i])))
 		cashcfuzais = append(cashcfuzais, utils.FloatFormat(cast.ToFloat64(MONETARYFUNDS[i])/utils.ConvertToBillions(cast.ToFloat64(totalcurrentliabs[i]))))
+		currentAssetTurnoverRatio = append(currentAssetTurnoverRatio, utils.FloatFormat(cashFlow[i].SalesServices/cast.ToFloat64(averageTotalcurrentassets[i])))
+		fixedAssetTurnoverRatio = append(fixedAssetTurnoverRatio, utils.FloatFormat(cashFlow[i].SalesServices/cast.ToFloat64(averageFixedasset[i])))
 	}
 
 	//fmt.Println("MONETARYFUNDS", MONETARYFUNDS)
@@ -670,6 +694,23 @@ func Chart(c *gin.Context) {
 				Name: "存货周转率",
 				Type: "line",
 				Y:    chzzls,
+			},
+		},
+	}, Char{
+		Name: "运营能力",
+		Series: []Series{
+			{
+				Name: "流动资产周转率",
+				Type: "line",
+				Y:    currentAssetTurnoverRatio,
+			}, {
+				Name: "固定资产周转率",
+				Type: "line",
+				Y:    fixedAssetTurnoverRatio,
+			}, {
+				Name: "总资产周转率",
+				Type: "line",
+				Y:    toazzl,
 			},
 		},
 	})
