@@ -225,6 +225,20 @@ func Chart(c *gin.Context) {
 	// 平均固定资产
 	averageFixedasset := []interface{}{}
 
+	// 占款能力
+	zhankuans := []interface{}{}
+
+	// 应收账款及其占现金的比率
+	accountsreces := []interface{}{}
+	accountsrecesDivOperateIncome := []interface{}{}
+
+	// 应付账款及其占现金的比率
+	noteaccountspayables := []interface{}{}
+	noteaccountspayablesDivOperateIncome := []interface{}{}
+
+	advancereceivables := []interface{}{}
+	advancereceivablesDivOperateIncome := []interface{}{}
+
 	for i, item := range balance {
 		LONGEQUITYINVEST = append(LONGEQUITYINVEST, utils.ConvertToBillions(cast.ToFloat64(item.LONGEQUITYINVEST)))
 		MONETARYFUNDS = append(MONETARYFUNDS, utils.ConvertToBillions(item.MONETARYFUNDS))
@@ -252,6 +266,19 @@ func Chart(c *gin.Context) {
 		youxiLiabilities = append(youxiLiabilities, utils.ConvertToBillions(item.NONCURRENTLIAB1YEAR))
 
 		monetaryfunds = append(monetaryfunds, utils.ConvertToBillions(item.MONETARYFUNDS))
+
+		zhankuanItem := (item.NOTEACCOUNTSPAYABLE + item.ADVANCERECEIVABLES + item.CONTRACTLIAB - item.ACCOUNTSRECE - item.PREPAYMENT) / incomes[i].TotalOperateIncome
+		zhankuans = append(zhankuans, utils.FloatFormat(zhankuanItem))
+
+		accountsreces = append(accountsreces, utils.ConvertToBillions(item.ACCOUNTSRECE))
+		accountsrecesDivOperateIncome = append(accountsrecesDivOperateIncome, utils.FloatFormat(item.ACCOUNTSRECE/incomes[i].TotalOperateIncome))
+
+		noteaccountspayables = append(noteaccountspayables, utils.ConvertToBillions(item.NOTEACCOUNTSPAYABLE))
+		noteaccountspayablesDivOperateIncome = append(noteaccountspayablesDivOperateIncome, utils.FloatFormat(item.NOTEACCOUNTSPAYABLE/incomes[i].TotalOperateIncome))
+
+		yushou := item.ADVANCERECEIVABLES + item.CONTRACTLIAB
+		advancereceivables = append(advancereceivables, utils.ConvertToBillions(yushou))
+		advancereceivablesDivOperateIncome = append(advancereceivablesDivOperateIncome, utils.FloatFormat(yushou/incomes[i].TotalOperateIncome))
 
 		if i == 0 {
 			averageTotalcurrentassets = append(averageTotalcurrentassets, item.TOTALCURRENTASSETS)
@@ -711,6 +738,57 @@ func Chart(c *gin.Context) {
 				Name: "总资产周转率",
 				Type: "line",
 				Y:    toazzl,
+			},
+		},
+	}, Char{
+		Name: "占款能力",
+		Series: []Series{
+			{
+				Name: "占款能力",
+				Type: "line",
+				Y:    zhankuans,
+			},
+		},
+	}, Char{
+		Name: "应收账款及其占营收的比例",
+		Series: []Series{
+			{
+				Name: "应收账款(亿)",
+				Type: "bar",
+				Y:    accountsreces,
+			},
+			{
+				Name: "应收账款及其占营收的比例",
+				Type: "line",
+				Y:    accountsrecesDivOperateIncome,
+			},
+		},
+	}, Char{
+		Name: "应付账款及其占营收的比例",
+		Series: []Series{
+			{
+				Name: "应付账款(亿)",
+				Type: "bar",
+				Y:    noteaccountspayables,
+			},
+			{
+				Name: "应付账款及其占营收的比例",
+				Type: "line",
+				Y:    noteaccountspayablesDivOperateIncome,
+			},
+		},
+	}, Char{
+		Name: "预收款及其占营收的比例",
+		Series: []Series{
+			{
+				Name: "预收款(亿)",
+				Type: "bar",
+				Y:    advancereceivables,
+			},
+			{
+				Name: "预收款及其占营收的比例",
+				Type: "line",
+				Y:    advancereceivablesDivOperateIncome,
 			},
 		},
 	})

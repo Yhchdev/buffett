@@ -15,22 +15,24 @@ import (
 
 // balanceData 资产负债表数据
 type BalanceData struct {
-	SECUCODE                string      `json:"SECUCODE"`
-	SECURITYCODE            string      `json:"SECURITY_CODE"`
-	SECURITYNAMEABBR        string      `json:"SECURITY_NAME_ABBR"`
-	ORGCODE                 string      `json:"ORG_CODE"`
-	ORGTYPE                 string      `json:"ORG_TYPE"`
-	REPORTDATE              string      `json:"REPORT_DATE"`
-	REPORTTYPE              string      `json:"REPORT_TYPE"`
-	REPORTDATENAME          string      `json:"REPORT_DATE_NAME"`
-	SECURITYTYPECODE        string      `json:"SECURITY_TYPE_CODE"`
-	NOTICEDATE              string      `json:"NOTICE_DATE"`
-	UPDATEDATE              string      `json:"UPDATE_DATE"`
-	CURRENCY                string      `json:"CURRENCY"`
-	ACCEPTDEPOSITINTERBANK  interface{} `json:"ACCEPT_DEPOSIT_INTERBANK"`
-	ACCOUNTSPAYABLE         float64     `json:"ACCOUNTS_PAYABLE"`
-	ACCOUNTSRECE            float64     `json:"ACCOUNTS_RECE"`
-	ACCRUEDEXPENSE          interface{} `json:"ACCRUED_EXPENSE"`
+	SECUCODE               string      `json:"SECUCODE"`
+	SECURITYCODE           string      `json:"SECURITY_CODE"`
+	SECURITYNAMEABBR       string      `json:"SECURITY_NAME_ABBR"`
+	ORGCODE                string      `json:"ORG_CODE"`
+	ORGTYPE                string      `json:"ORG_TYPE"`
+	REPORTDATE             string      `json:"REPORT_DATE"`
+	REPORTTYPE             string      `json:"REPORT_TYPE"`
+	REPORTDATENAME         string      `json:"REPORT_DATE_NAME"`
+	SECURITYTYPECODE       string      `json:"SECURITY_TYPE_CODE"`
+	NOTICEDATE             string      `json:"NOTICE_DATE"`
+	UPDATEDATE             string      `json:"UPDATE_DATE"`
+	CURRENCY               string      `json:"CURRENCY"`
+	ACCEPTDEPOSITINTERBANK interface{} `json:"ACCEPT_DEPOSIT_INTERBANK"`
+	ACCOUNTSPAYABLE        float64     `json:"ACCOUNTS_PAYABLE"`
+	// 应收票据和应收账款
+	ACCOUNTSRECE   float64     `json:"ACCOUNTS_RECE"`
+	ACCRUEDEXPENSE interface{} `json:"ACCRUED_EXPENSE"`
+	// 预收款
 	ADVANCERECEIVABLES      float64     `json:"ADVANCE_RECEIVABLES"`
 	AGENTTRADESECURITY      interface{} `json:"AGENT_TRADE_SECURITY"`
 	AGENTUNDERWRITESECURITY interface{} `json:"AGENT_UNDERWRITE_SECURITY"`
@@ -52,30 +54,31 @@ type BalanceData struct {
 	CIP                        float64     `json:"CIP"`
 	CONSUMPTIVEBIOLOGICALASSET interface{} `json:"CONSUMPTIVE_BIOLOGICAL_ASSET"`
 	CONTRACTASSET              interface{} `json:"CONTRACT_ASSET"`
-	CONTRACTLIAB               float64     `json:"CONTRACT_LIAB"`
-	CONVERTDIFF                interface{} `json:"CONVERT_DIFF"`
-	CREDITORINVEST             interface{} `json:"CREDITOR_INVEST"`
-	CURRENTASSETBALANCE        int         `json:"CURRENT_ASSET_BALANCE"`
-	CURRENTASSETOTHER          interface{} `json:"CURRENT_ASSET_OTHER"`
-	CURRENTLIABBALANCE         int         `json:"CURRENT_LIAB_BALANCE"`
-	CURRENTLIABOTHER           interface{} `json:"CURRENT_LIAB_OTHER"`
-	DEFERINCOME                float64     `json:"DEFER_INCOME"`
-	DEFERINCOME1YEAR           interface{} `json:"DEFER_INCOME_1YEAR"`
-	DEFERTAXASSET              float64     `json:"DEFER_TAX_ASSET"`
-	DEFERTAXLIAB               float64     `json:"DEFER_TAX_LIAB"`
-	DERIVEFINASSET             interface{} `json:"DERIVE_FINASSET"`
-	DERIVEFINLIAB              interface{} `json:"DERIVE_FINLIAB"`
-	DEVELOPEXPENSE             interface{} `json:"DEVELOP_EXPENSE"`
-	DIVHOLDSALEASSET           interface{} `json:"DIV_HOLDSALE_ASSET"`
-	DIVHOLDSALELIAB            interface{} `json:"DIV_HOLDSALE_LIAB"`
-	DIVIDENDPAYABLE            float64     `json:"DIVIDEND_PAYABLE"`
-	DIVIDENDRECE               interface{} `json:"DIVIDEND_RECE"`
-	EQUITYBALANCE              int         `json:"EQUITY_BALANCE"`
-	EQUITYOTHER                interface{} `json:"EQUITY_OTHER"`
-	EXPORTREFUNDRECE           interface{} `json:"EXPORT_REFUND_RECE"`
-	FEECOMMISSIONPAYABLE       interface{} `json:"FEE_COMMISSION_PAYABLE"`
-	FINFUND                    interface{} `json:"FIN_FUND"`
-	FINANCERECE                float64     `json:"FINANCE_RECE"`
+	// 合同负债 企业已收或应收客户对价而应向客户转让商品的义务
+	CONTRACTLIAB         float64     `json:"CONTRACT_LIAB"`
+	CONVERTDIFF          interface{} `json:"CONVERT_DIFF"`
+	CREDITORINVEST       interface{} `json:"CREDITOR_INVEST"`
+	CURRENTASSETBALANCE  int         `json:"CURRENT_ASSET_BALANCE"`
+	CURRENTASSETOTHER    interface{} `json:"CURRENT_ASSET_OTHER"`
+	CURRENTLIABBALANCE   int         `json:"CURRENT_LIAB_BALANCE"`
+	CURRENTLIABOTHER     interface{} `json:"CURRENT_LIAB_OTHER"`
+	DEFERINCOME          float64     `json:"DEFER_INCOME"`
+	DEFERINCOME1YEAR     interface{} `json:"DEFER_INCOME_1YEAR"`
+	DEFERTAXASSET        float64     `json:"DEFER_TAX_ASSET"`
+	DEFERTAXLIAB         float64     `json:"DEFER_TAX_LIAB"`
+	DERIVEFINASSET       interface{} `json:"DERIVE_FINASSET"`
+	DERIVEFINLIAB        interface{} `json:"DERIVE_FINLIAB"`
+	DEVELOPEXPENSE       interface{} `json:"DEVELOP_EXPENSE"`
+	DIVHOLDSALEASSET     interface{} `json:"DIV_HOLDSALE_ASSET"`
+	DIVHOLDSALELIAB      interface{} `json:"DIV_HOLDSALE_LIAB"`
+	DIVIDENDPAYABLE      float64     `json:"DIVIDEND_PAYABLE"`
+	DIVIDENDRECE         interface{} `json:"DIVIDEND_RECE"`
+	EQUITYBALANCE        int         `json:"EQUITY_BALANCE"`
+	EQUITYOTHER          interface{} `json:"EQUITY_OTHER"`
+	EXPORTREFUNDRECE     interface{} `json:"EXPORT_REFUND_RECE"`
+	FEECOMMISSIONPAYABLE interface{} `json:"FEE_COMMISSION_PAYABLE"`
+	FINFUND              interface{} `json:"FIN_FUND"`
+	FINANCERECE          float64     `json:"FINANCE_RECE"`
 	// 固定资产
 	FIXEDASSET               float64     `json:"FIXED_ASSET"`
 	FIXEDASSETDISPOSAL       interface{} `json:"FIXED_ASSET_DISPOSAL"`
@@ -122,7 +125,8 @@ type BalanceData struct {
 	NONCURRENTLIAB1YEAR   float64     `json:"NONCURRENT_LIAB_1YEAR"`
 	NONCURRENTLIABBALANCE int         `json:"NONCURRENT_LIAB_BALANCE"`
 	NONCURRENTLIABOTHER   interface{} `json:"NONCURRENT_LIAB_OTHER"`
-	NOTEACCOUNTSPAYABLE   float64     `json:"NOTE_ACCOUNTS_PAYABLE"`
+	// 应付票据和应付账款
+	NOTEACCOUNTSPAYABLE float64 `json:"NOTE_ACCOUNTS_PAYABLE"`
 	// 应收账款
 	NOTEACCOUNTSRECE        float64     `json:"NOTE_ACCOUNTS_RECE"`
 	NOTEPAYABLE             float64     `json:"NOTE_PAYABLE"`
