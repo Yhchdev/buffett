@@ -15,6 +15,10 @@ func FloatFormat(n float64) float64 {
 	return math.Round(n*100) / 100
 }
 
+func FloatFormatToGrowth(n float64) float64 {
+	return (math.Round(n*100) / 100) * 100
+}
+
 func GincomeReportDateParams(reportType string, nums int, startYear int) string {
 
 	suffix := ""

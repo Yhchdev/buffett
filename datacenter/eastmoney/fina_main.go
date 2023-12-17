@@ -88,7 +88,7 @@ type FinaMainData struct {
 	Kfjlrgdhbzc float64 `json:"KFJLRGDHBZC"`
 
 	// ------ 盈利能力指标 ------
-	// 净资产收益率（加权）（%）
+	// 净资产收益率（加权）（%）  ROE
 	Roejq float64 `json:"ROEJQ"`
 	// 净资产收益率（扣非/加权）（%）
 	Roekcjq float64 `json:"ROEKCJQ"`

@@ -45,15 +45,17 @@ type GincomeData struct {
 	OtherBusinessIncomeYoy interface{} `json:"OTHER_BUSINESS_INCOME_YOY"`
 	ToiOther               interface{} `json:"TOI_OTHER"`
 	ToiOtherYoy            interface{} `json:"TOI_OTHER_YOY"`
-	//营业成本
-	TotalOperateCost        float64     `json:"TOTAL_OPERATE_COST"`
-	TotalOperateCostYoy     float64     `json:"TOTAL_OPERATE_COST_YOY"`
+	//营业总成本
+	TotalOperateCost    float64 `json:"TOTAL_OPERATE_COST"`
+	TotalOperateCostYoy float64 `json:"TOTAL_OPERATE_COST_YOY"`
+	// 营业成本
 	OperateCost             float64     `json:"OPERATE_COST"`
 	OperateCostYoy          float64     `json:"OPERATE_COST_YOY"`
 	InterestExpense         interface{} `json:"INTEREST_EXPENSE"`
 	InterestExpenseYoy      interface{} `json:"INTEREST_EXPENSE_YOY"`
 	FeeCommissionExpense    interface{} `json:"FEE_COMMISSION_EXPENSE"`
 	FeeCommissionExpenseYoy interface{} `json:"FEE_COMMISSION_EXPENSE_YOY"`
+	// 研发费用
 	ResearchExpense         float64     `json:"RESEARCH_EXPENSE"`
 	ResearchExpenseYoy      float64     `json:"RESEARCH_EXPENSE_YOY"`
 	SurrenderValue          interface{} `json:"SURRENDER_VALUE"`

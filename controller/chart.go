@@ -108,6 +108,7 @@ func Chart(c *gin.Context) {
 	Parentnetprofit := []interface{}{}
 	Parentnetprofittz := []interface{}{}
 	Xsmll := []interface{}{}
+	// 净利率
 	Xsjll := []interface{}{}
 	roekcjqs := []interface{}{}
 	zzcjlls := []interface{}{}
@@ -117,6 +118,18 @@ func Chart(c *gin.Context) {
 	chzzls := []interface{}{}
 	// 总资产周转率
 	toazzl := []interface{}{}
+
+	// roe
+	roejqs := []interface{}{}
+	// 权益乘数
+	qycs := []interface{}{}
+
+	// 存货周转天数
+	chzzts := []interface{}{}
+	// 应收账款周转天数
+	yszkzzts := []interface{}{}
+	//  应付账款周转天数
+	yfzkzzts := []interface{}{}
 
 	for _, item := range usefulHistory {
 		tableX = append(tableX, item.ReportYear)
@@ -135,13 +148,29 @@ func Chart(c *gin.Context) {
 
 		chzzls = append(chzzls, utils.FloatFormat(item.Chzzl))
 		toazzl = append(toazzl, utils.FloatFormat(item.Toazzl))
+
+		roejqs = append(roejqs, item.Roejq)
+
+		qycs = append(qycs, utils.FloatFormat(item.Qycs))
+
+		chzzts = append(chzzts, utils.FloatFormat(item.Chzzts))
+
+		yszkzzts = append(yszkzzts, utils.FloatFormat(item.Yszkzzts))
 	}
 
 	// 核心利润
 	coreProfit := []interface{}{}
 	coreProfitCompareOperateIncome := []interface{}{}
 
-	for _, item := range incomes {
+	researchExpenseDivTotalOperateIncome := []interface{}{}
+	saleExpenseDivTotalOperateIncome := []interface{}{}
+	manageExpenseDivTotalOperateIncome := []interface{}{}
+	financeExpenseDivTotalOperateIncome := []interface{}{}
+
+	// 费用增长率
+	expenseGrowthRate := []interface{}{}
+
+	for i, item := range incomes {
 		coreP := utils.ConvertToBillions(item.OperateIncome - item.OperateTaxAdd - item.OperateCost - item.ManageExpense -
 			item.SaleExpense - item.FinanceExpense)
 		coreProfit = append(coreProfit, coreP)
@@ -149,6 +178,20 @@ func Chart(c *gin.Context) {
 		coreProfitCIncome := utils.FloatFormat(coreP/utils.ConvertToBillions(item.OperateIncome)) * 100
 
 		coreProfitCompareOperateIncome = append(coreProfitCompareOperateIncome, coreProfitCIncome)
+
+		researchExpenseDivTotalOperateIncome = append(researchExpenseDivTotalOperateIncome, utils.FloatFormat(item.ResearchExpense/incomes[i].TotalOperateIncome))
+		saleExpenseDivTotalOperateIncome = append(saleExpenseDivTotalOperateIncome, utils.FloatFormat(item.SaleExpense/incomes[i].TotalOperateIncome))
+		manageExpenseDivTotalOperateIncome = append(manageExpenseDivTotalOperateIncome, utils.FloatFormat(item.ManageExpense/incomes[i].TotalOperateIncome))
+		financeExpenseDivTotalOperateIncome = append(financeExpenseDivTotalOperateIncome, utils.FloatFormat(item.FinanceExpense/incomes[i].TotalOperateIncome))
+
+		if i == 0 {
+			expenseGrowthRate = append(expenseGrowthRate, 0)
+		} else {
+			expense3 := item.ResearchExpense + item.SaleExpense + item.ManageExpense
+			lastYear3Expense := incomes[i-1].ResearchExpense + incomes[i-1].SaleExpense + incomes[i-1].ManageExpense
+			expenseGrowthItem := utils.FloatFormatToGrowth((expense3 - lastYear3Expense) / lastYear3Expense)
+			expenseGrowthRate = append(expenseGrowthRate, expenseGrowthItem)
+		}
 	}
 
 	netcashOperate := []interface{}{}
@@ -239,6 +282,11 @@ func Chart(c *gin.Context) {
 	advancereceivables := []interface{}{}
 	advancereceivablesDivOperateIncome := []interface{}{}
 
+	// 预收款与应收收款的比值
+	advancereceivablesDivaccountsreces := []interface{}{}
+
+	inventoryGrowthRate := []interface{}{}
+
 	for i, item := range balance {
 		LONGEQUITYINVEST = append(LONGEQUITYINVEST, utils.ConvertToBillions(cast.ToFloat64(item.LONGEQUITYINVEST)))
 		MONETARYFUNDS = append(MONETARYFUNDS, utils.ConvertToBillions(item.MONETARYFUNDS))
@@ -280,12 +328,21 @@ func Chart(c *gin.Context) {
 		advancereceivables = append(advancereceivables, utils.ConvertToBillions(yushou))
 		advancereceivablesDivOperateIncome = append(advancereceivablesDivOperateIncome, utils.FloatFormat(yushou/incomes[i].TotalOperateIncome))
 
+		advancereceivablesDivaccountsreces = append(advancereceivablesDivaccountsreces, utils.FloatFormat(yushou/(item.ACCOUNTSRECE+item.PREPAYMENT)))
+
 		if i == 0 {
 			averageTotalcurrentassets = append(averageTotalcurrentassets, item.TOTALCURRENTASSETS)
 			averageFixedasset = append(averageFixedasset, item.FIXEDASSET)
+			inventoryGrowthRate = append(inventoryGrowthRate, 0)
+			yfzkzzts = append(yfzkzzts, 0)
+
 		} else {
 			averageTotalcurrentassets = append(averageTotalcurrentassets, (item.TOTALCURRENTASSETS+balance[i-1].TOTALCURRENTASSETS)/2)
 			averageFixedasset = append(averageFixedasset, (item.FIXEDASSET+balance[i-1].FIXEDASSET)/2)
+			inventoryGrowthRate = append(inventoryGrowthRate, utils.FloatFormat((item.INVENTORY-balance[i-1].INVENTORY)/balance[i-1].INVENTORY))
+
+			yfzkzzts = append(yfzkzzts, utils.FloatFormat(365/(incomes[i].OperateCost/((balance[i].NOTEACCOUNTSPAYABLE+balance[i-1].NOTEACCOUNTSPAYABLE)/2))))
+
 		}
 	}
 
@@ -303,12 +360,16 @@ func Chart(c *gin.Context) {
 	// 固定资产周转率
 	fixedAssetTurnoverRatio := []interface{}{}
 
+	// 现金循环天数
+	xjxhts := []interface{}{}
+
 	for i := 0; i < len(totalparentequity); i++ {
 		zibenshouyis = append(zibenshouyis, utils.FloatFormat(cast.ToFloat64(KCFJCXSYJLR[i])/cast.ToFloat64(totalparentequity[i])))
 		liudongs = append(liudongs, utils.FloatFormat(cast.ToFloat64(totalcurrentassets[i])/cast.ToFloat64(totalcurrentliabs[i])))
 		cashcfuzais = append(cashcfuzais, utils.FloatFormat(cast.ToFloat64(MONETARYFUNDS[i])/utils.ConvertToBillions(cast.ToFloat64(totalcurrentliabs[i]))))
 		currentAssetTurnoverRatio = append(currentAssetTurnoverRatio, utils.FloatFormat(cashFlow[i].SalesServices/cast.ToFloat64(averageTotalcurrentassets[i])))
 		fixedAssetTurnoverRatio = append(fixedAssetTurnoverRatio, utils.FloatFormat(cashFlow[i].SalesServices/cast.ToFloat64(averageFixedasset[i])))
+		xjxhts = append(xjxhts, utils.FloatFormat(cast.ToFloat64(chzzts[i])+cast.ToFloat64(yszkzzts[i])-cast.ToFloat64(yfzkzzts[i])))
 	}
 
 	//fmt.Println("MONETARYFUNDS", MONETARYFUNDS)
@@ -750,6 +811,30 @@ func Chart(c *gin.Context) {
 			},
 		},
 	}, Char{
+		Name: "循环周期(天)",
+		Series: []Series{
+			{
+				Name: "存货周转天数",
+				Type: "line",
+				Y:    chzzts,
+			},
+			{
+				Name: "应收账款周转天数",
+				Type: "line",
+				Y:    yszkzzts,
+			},
+			{
+				Name: "应付账款周转天数",
+				Type: "line",
+				Y:    yfzkzzts,
+			},
+			{
+				Name: "现金循环周期",
+				Type: "line",
+				Y:    xjxhts,
+			},
+		},
+	}, Char{
 		Name: "应收账款及其占营收的比例",
 		Series: []Series{
 			{
@@ -791,7 +876,109 @@ func Chart(c *gin.Context) {
 				Y:    advancereceivablesDivOperateIncome,
 			},
 		},
-	})
+	}, Char{
+		Name: "预收款及其占应付账款的比例",
+		Series: []Series{
+			{
+				Name: "预收款(亿)",
+				Type: "bar",
+				Y:    advancereceivables,
+			},
+			{
+				Name: "预收款及其占应付账款的比例",
+				Type: "line",
+				Y:    advancereceivablesDivaccountsreces,
+			},
+		},
+	}, Char{
+		Name: "存货及其增长率",
+		Series: []Series{
+			{
+				Name: "存货(亿)",
+				Type: "bar",
+				Y:    INVENTORY,
+			},
+			{
+				Name: "存货增长率",
+				Type: "line",
+				Y:    inventoryGrowthRate,
+			},
+		},
+	}, Char{
+		Name: "费用占营收的比率",
+		Series: []Series{
+			{
+				Name:     "财务费用占比",
+				Type:     "bar",
+				Emphasis: Emphasis{Focus: "series"},
+				Stack:    "total",
+				Y:        financeExpenseDivTotalOperateIncome,
+				YType:    "value",
+			},
+			{
+				Name:     "管理费用占比",
+				Type:     "bar",
+				Emphasis: Emphasis{Focus: "series"},
+				Stack:    "total",
+				Y:        manageExpenseDivTotalOperateIncome,
+				YType:    "value",
+			},
+			{
+				Name:     "研发费用占比",
+				Type:     "bar",
+				Emphasis: Emphasis{Focus: "series"},
+				Stack:    "total",
+				Y:        researchExpenseDivTotalOperateIncome,
+				YType:    "value",
+			},
+			{
+				Name:     "销售费用占比",
+				Type:     "bar",
+				Emphasis: Emphasis{Focus: "series"},
+				Stack:    "total",
+				Y:        saleExpenseDivTotalOperateIncome,
+				YType:    "value",
+			},
+		}},
+		Char{
+			Name: "费用增长率和营收增长率",
+			Series: []Series{
+				{
+					Name: "费用增长率",
+					Type: "line",
+					Y:    expenseGrowthRate,
+				},
+				{
+					Name: "营收增长率",
+					Type: "line",
+					Y:    Totaloperaterevetz,
+				},
+			},
+		}, Char{
+			Name: "杜邦分析",
+			Series: []Series{
+				{
+					Name: "roe",
+					Type: "line",
+					Y:    roejqs,
+				},
+				{
+					Name: "总资产周转率",
+					Type: "line",
+					Y:    toazzl,
+				},
+				{
+					Name: "权益乘数",
+					Type: "line",
+					Y:    qycs,
+				},
+				{
+					Name: "营业净利润率",
+					Type: "line",
+					Y:    Xsjll,
+				},
+			},
+		})
 
 	// 处理请求并返回响应
 	c.JSON(200, gin.H{
