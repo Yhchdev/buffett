@@ -42,6 +42,6 @@ func RefreshToken() {
 		AccessToken = wxToken.AccessToken
 		logrus.Println("get token success:", AccessToken)
 
-		time.Sleep(7000)
+		time.Sleep(time.Second * 7000)
 	}
 }
