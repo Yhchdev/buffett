@@ -1,11 +1,15 @@
 package controller
 
 import (
+	"encoding/json"
 	"encoding/xml"
 	"fmt"
 	"github.com/Yhchdev/buffett/config"
+	"github.com/Yhchdev/buffett/job"
 	"github.com/Yhchdev/buffett/model"
 	"github.com/gin-gonic/gin"
+	"github.com/go-resty/resty/v2"
+	"github.com/sirupsen/logrus"
 	"gorm.io/gorm/clause"
 	"io/ioutil"
 	"log"
@@ -78,4 +82,34 @@ func Follow(c *gin.Context) {
 
 	// todo 重定向到搜索页
 
+}
+
+type QrTicket struct {
+	Ticket        string `json:"ticket"`
+	ExpireSeconds int    `json:"expire_seconds"`
+	Url           string `json:"url"`
+}
+
+func SceneQRCode(c *gin.Context) {
+	HTTPClient := resty.New()
+
+	params := map[string]string{
+		"access_token": job.AccessToken,
+	}
+
+	resp, err := HTTPClient.R().SetQueryParams(params).Post("https://api.weixin.qq.com/cgi-bin/qrcode/create")
+	if err != nil {
+		logrus.Error(err)
+		return
+	}
+
+	qrTicket := QrTicket{}
+	if err = json.Unmarshal(resp.Body(), &qrTicket); err != nil {
+		logrus.Error(err)
+		return
+	}
+
+	c.JSON(200, gin.H{
+		"ticket": qrTicket.Ticket,
+	})
 }

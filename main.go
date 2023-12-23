@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"github.com/Yhchdev/buffett/controller"
 	"github.com/Yhchdev/buffett/datacenter/eastmoney"
+	"github.com/Yhchdev/buffett/job"
 	"github.com/Yhchdev/buffett/middleware"
 	"github.com/Yhchdev/buffett/utils"
 	"github.com/gin-gonic/gin"
@@ -96,6 +97,9 @@ func main() {
 	router.GET("/chart", controller.Chart)
 	router.GET("/hot_stock", controller.HotStock)
 
+	// 获取扫码场景二维码
+	router.GET("/scene_qr_code", controller.SceneQRCode)
+
 	router.GET("/wx/check", controller.WxCheck)
 	//router.POST("/wx/check", controller.WxCheck)
 
@@ -105,6 +109,8 @@ func main() {
 
 	// 微信支付成功 callback
 	router.POST("/wx/pay", controller.Pay)
+
+	go job.RefreshToken()
 
 	router.Run(":9000")
 
