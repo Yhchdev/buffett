@@ -4,7 +4,7 @@ import (
 	"time"
 )
 
-type User struct {
+type Users struct {
 	Id           int64     `json:"id"`
 	UserName     string    `json:"user_name"` // shiniugu_ + open_id[:6]
 	OpenId       string    `json:"open_id"`
@@ -14,4 +14,8 @@ type User struct {
 	IsFollow     bool      `json:"is_follow"`     // 是否还在关注着公众号
 	CreatedAt    time.Time `json:"created_at"`
 	UpdatedAt    time.Time `json:"updated_at"`
+}
+
+func (Users) TableName() string {
+	return "users"
 }

@@ -55,13 +55,14 @@ func Follow(c *gin.Context) {
 
 	now := time.Now()
 
-	user := model.User{
-		Id:        now.UnixNano(),
-		UserName:  fmt.Sprintf("ShiNiuGu_%s", message.FromUserName[len(message.FromUserName)-6:]),
-		OpenId:    message.FromUserName,
-		TotalCost: 0,
-		CreatedAt: now,
-		UpdatedAt: now,
+	user := model.Users{
+		Id:           now.UnixNano(),
+		UserName:     fmt.Sprintf("ShiNiuGu_%s", message.FromUserName[len(message.FromUserName)-6:]),
+		OpenId:       message.FromUserName,
+		TotalCost:    0,
+		CreatedAt:    now,
+		UpdatedAt:    now,
+		LastRecharge: now,
 	}
 
 	if message.Event == "subscribe" {
@@ -72,7 +73,7 @@ func Follow(c *gin.Context) {
 
 	db.Clauses(clause.OnConflict{
 		Columns:   []clause.Column{{Name: "open_id"}},
-		DoUpdates: clause.AssignmentColumns([]string{"role", "is_follow"}),
+		DoUpdates: clause.AssignmentColumns([]string{"is_follow"}),
 	}).Create(&user)
 
 	// todo 重定向到搜索页
