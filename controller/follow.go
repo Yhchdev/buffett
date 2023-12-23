@@ -97,7 +97,9 @@ func SceneQRCode(c *gin.Context) {
 		"access_token": job.AccessToken,
 	}
 
-	resp, err := HTTPClient.R().SetQueryParams(params).Post("https://api.weixin.qq.com/cgi-bin/qrcode/create")
+	bodyParams := `{"expire_seconds": 604800, "action_name": "QR_SCENE", "action_info": {"scene": {"scene_id": 123}}}`
+
+	resp, err := HTTPClient.R().SetQueryParams(params).SetBody(bodyParams).Post("https://api.weixin.qq.com/cgi-bin/qrcode/create")
 	if err != nil {
 		logrus.Error(err)
 		return
